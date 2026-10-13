@@ -153,7 +153,21 @@ button:focus-visible,summary:focus-visible{outline:2px solid var(--ore);outline-
 .cx-bar{grid-column:1/-1;display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:14px clamp(16px,4vw,48px) calc(14px + env(safe-area-inset-bottom,0px));background:linear-gradient(180deg,rgba(6,10,12,0),rgba(6,10,12,.92) 30%);border-top:1px solid rgba(95,227,208,.18)}
 .cx-bar .sp{flex:1}
 .pillset{display:flex;flex-wrap:wrap;gap:6px}
-.pill{background:rgba(10,18,22,.8);border:1px solid #2c4048;border-radius:4px;padding:7px 11px;font-size:13px;cursor:pointer;display:flex;gap:7px;align-items:baseline}
+.pill{background:rgba(10,18,22,.8);border:1px solid #2c4048;border-radius:4px;padding:6px 11px 6px 8px;font-size:13px;cursor:pointer;display:flex;gap:7px;align-items:center;line-height:1.2}
+.pill .ic{width:20px;height:20px;flex:none;fill:none;stroke:var(--ore);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 4px rgba(95,227,208,.45))}
+.pill .ic .f{fill:var(--ore);stroke:none}
+.pill .ic .f2{fill:rgba(95,227,208,.18)}
+.pill.tog .ic .mute{display:none}
+.pill.tog:not(.on) .ic{stroke:var(--dim);filter:none}
+.pill.tog:not(.on) .ic .wv{display:none}
+.pill.tog:not(.on) .ic .mute{display:inline}
+.pill .sw{position:relative;width:34px;height:18px;border-radius:9px;background:#26363a;border:1px solid #3a4f57;transition:background .2s,border-color .2s;flex:none}
+.pill .sw i{position:absolute;top:2px;left:2px;width:12px;height:12px;border-radius:50%;background:#8b9d98;transition:transform .2s,background .2s}
+.pill.tog.on{border-color:#2c4048;background:rgba(10,18,22,.8)}
+.pill.tog:hover{border-color:var(--ore)}
+.pill.tog.on .sw{background:rgba(95,227,208,.3);border-color:var(--ore)}
+.pill.tog.on .sw i{transform:translateX(16px);background:var(--ore);box-shadow:0 0 8px var(--ore)}
+@media (prefers-reduced-motion:reduce){.pill .sw,.pill .sw i{transition:none}}
 .pill small{font-family:var(--f-mono);font-size:10.5px;color:var(--dim);letter-spacing:.06em}
 .pill:hover,.pill.on{border-color:var(--ore)}
 .pill.on{background:#10262a}
@@ -337,11 +351,11 @@ kbd{font-family:var(--f-mono);font-size:11.5px;border:1px solid var(--line);bord
     </div>
     <div class="cx-bar">
       <div class="pillset">
-        <button class="pill" data-pop="popMap"><small>맵</small><span id="pMap">격전지</span></button>
-        <button class="pill" data-pop="popMatch"><small>대전</small><span id="pMatch">1 : 1</span></button>
-        <button class="pill" data-pop="popDiff"><small>난이도</small><span id="pDiff">보통</span></button>
-        <button class="pill" id="pSound"><small>소리</small><span>켬</span></button>
-        <button class="pill" data-pop="popHelp"><small>도움말</small><span>조작법</span></button>
+        <button class="pill" data-pop="popMap"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.5l6-2.5 6 2.5 6-2.5v13.5l-6 2.5-6-2.5-6 2.5z"/><path d="M9 4v13.5M15 6.5V20"/><circle cx="18.2" cy="9" r="1.6" class="f"/></svg><small>맵</small><span id="pMap">격전지</span></button>
+        <button class="pill" data-pop="popMatch"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4l9.5 9.5M4 4v3.5M4 4h3.5"/><path d="M20 4l-9.5 9.5M20 4v3.5M20 4h-3.5"/><path d="M11 16l-3 3M13 16l3 3M6.5 14.5l3 3M17.5 14.5l-3 3"/></svg><small>대전</small><span id="pMatch">1 : 1</span></button>
+        <button class="pill" data-pop="popDiff"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 17a8 8 0 1 1 15 0"/><path d="M12 17l4-6"/><circle cx="12" cy="17" r="1.6" class="f"/><path d="M7 13.2l-1.2-.7M12 9V7.6M17 13.2l1.2-.7"/></svg><small>난이도</small><span id="pDiff">보통</span></button>
+        <button class="pill tog on" id="pSound" role="switch" aria-checked="true" aria-label="소리"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13L7.5 14.5H4z" class="f2"/><path class="wv" d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/><path class="mute" d="M15.5 9.5l5 5M20.5 9.5l-5 5"/></svg><small>소리</small><span class="sw" aria-hidden="true"><i></i></span></button>
+        <button class="pill" data-pop="popHelp"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M9.6 9.6a2.5 2.5 0 1 1 3.4 2.3c-.7.3-1 .8-1 1.5v.6"/><circle cx="12" cy="16.9" r="1.1" class="f"/></svg><small>도움말</small><span>조작법</span></button>
       </div>
       <span class="sp"></span>
       <button class="go" id="startBtn">출격</button>
@@ -1827,7 +1841,7 @@ function menuTick(dt){
 }
 function closePops(){document.querySelectorAll('.cx-pop').forEach(p=>p.hidden=true);document.querySelectorAll('.pill[data-pop]').forEach(p=>p.classList.remove('on'));}
 function pillLabels(){$('#pMap').textContent=MAPS[choice.map].name;$('#pMatch').textContent=matchLabel(choice.opp,choice.opp===1?'ffa':choice.mode);
-  $('#pDiff').textContent=DIFF[choice.diff].label;$('#pSound span').textContent=Snd.isOn()?'켬':'끔';}
+  $('#pDiff').textContent=DIFF[choice.diff].label;const ps=$('#pSound');ps.classList.toggle('on',Snd.isOn());ps.setAttribute('aria-checked',Snd.isOn()?'true':'false');}
 document.querySelectorAll('.pill[data-pop]').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();const p=$('#'+b.dataset.pop),open=p.hidden;closePops();if(open){p.hidden=false;b.classList.add('on');}}));
 document.querySelectorAll('.cx-pop').forEach(p=>p.addEventListener('click',e=>e.stopPropagation()));
 $('#menu').addEventListener('click',()=>closePops());
