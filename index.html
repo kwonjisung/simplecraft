@@ -93,6 +93,11 @@ button:focus-visible,summary:focus-visible{outline:2px solid var(--ore);outline-
 .q{display:flex;gap:6px;flex-wrap:wrap}
 .q span{font-size:12px;padding:2px 8px;border:1px solid var(--line);border-radius:4px;position:relative;overflow:hidden}
 .q span i{position:absolute;left:0;bottom:0;height:2px;background:var(--ore)}
+.q .qi{font:inherit;font-size:12px;color:var(--ink);padding:3px 6px 3px 9px;background:var(--console-2);border:1px solid var(--line);border-radius:4px;position:relative;overflow:hidden;cursor:pointer;display:flex;align-items:center;gap:6px;touch-action:manipulation}
+.q .qi b{font-weight:400;font-size:10px;color:var(--dim);width:14px;height:14px;display:grid;place-items:center;border-radius:3px}
+.q .qi:hover{border-color:var(--alert);background:#2a1a1a}
+.q .qi:hover b{color:#fff;background:var(--alert)}
+.q .qi i{position:absolute;left:0;bottom:0;height:2px;background:var(--ore)}
 .groups{display:flex;flex-wrap:wrap;gap:6px}
 .groups span{font-size:12.5px;padding:3px 9px;background:var(--console-2);border:1px solid var(--line);border-radius:4px}
 .groups b{font-family:var(--f-mono);font-weight:600}
@@ -1049,6 +1054,12 @@ function train(blds,kind){
   tm.minerals-=s.cost;b.queue.push({kind,t:0});recomputeSupply();lastSig='';Snd.play('click');
 }
 function cancelTrain(b){const q=b.queue.pop();if(q){T(0).minerals+=T(0).S[q.kind].cost;recomputeSupply();lastSig='';}}
+function cancelQueueAt(b,i){
+  if(!b||b.team!==0||!b.queue[i])return;
+  const q=b.queue.splice(i,1)[0],c=T(0).S[q.kind].cost;
+  T(0).minerals+=c;recomputeSupply();lastSig='';uiAcc=1;
+  Snd.play('click');toast(`${R(0).names[q.kind]} 생산 취소 · 미네랄 +${c}`);
+}
 function cancelBuild(b){T(0).minerals+=Math.round(T(0).S[b.kind].cost*.75);b.dead=true;}
 function startPlacing(kind){
   if(T(0).minerals<T(0).S[kind].cost){toast('미네랄이 부족합니다',true);return;}
@@ -1714,6 +1725,10 @@ function uiTick(dt){
   if(sig!==lastSig){lastSig=sig;
     $('#cmds').innerHTML=curCmds.map((c,i)=>`<button class="cmd${c.on?' on':''}" data-i="${i}"${c.dis?' disabled':''}><span class="k">${c.key}</span><b>${c.label}</b>${c.cost!=null?`<span class="c">◆${c.cost}${c.sup?` · ${c.sup}보급`:''}</span>`:''}</button>`).join('');}
 }
+$('#info').addEventListener('pointerdown',e=>{const b=e.target.closest('.qi');if(!b||!G)return;e.preventDefault();
+  const sel=selEnts();if(sel.length===1&&sel[0].type==='b')cancelQueueAt(sel[0],+b.dataset.qi);});
+$('#info').addEventListener('keydown',e=>{if(e.key!=='Enter'&&e.key!==' ')return;const b=e.target.closest('.qi');if(!b||!G)return;e.preventDefault();
+  const sel=selEnts();if(sel.length===1&&sel[0].type==='b')cancelQueueAt(sel[0],+b.dataset.qi);});
 $('#cmds').addEventListener('click',e=>{const b=e.target.closest('.cmd');if(!b||b.disabled)return;const c=curCmds[+b.dataset.i];if(c){Snd.play('click');c.act();lastSig='';uiAcc=1;}});
 function renderInfo(){
   const el=$('#info'),es=selEnts();
@@ -1734,7 +1749,11 @@ function renderInfo(){
   else{
     if(BLD[e.kind].sup)h+=`<div class="stats">보급 <b>+${BLD[e.kind].sup}</b></div>`;
     if(e.kind==='turret')h+=`<div class="stats">공격 <b>${Math.round(S.dmg)}</b> · 사거리 <b>${Math.round(S.range)}</b> · 자동 공격</div>`;
-    if(e.queue.length){h+=`<div class="q">${e.queue.map((q,i)=>`<span>${race.names[q.kind]}${i===0?`<i style="width:${q.t/T(e.team).S[q.kind].time*100}%"></i>`:''}</span>`).join('')}</div>`;}
+    if(e.queue.length){
+      const mine=e.team===0;
+      h+=`<div class="q">${e.queue.map((q,i)=>{const pr=i===0?`<i style="width:${q.t/T(e.team).S[q.kind].time*100}%"></i>`:'';
+        return mine?`<button class="qi" data-qi="${i}" title="눌러서 취소 (미네랄 ${T(0).S[q.kind].cost} 돌려받음)">${race.names[q.kind]}<b aria-hidden="true">✕</b>${pr}</button>`:`<span>${race.names[q.kind]}${pr}</span>`;}).join('')}</div>`;
+      if(mine)h+=`<div class="hint">생산 대기 ${e.queue.length}/5 · 눌러서 취소하면 미네랄을 모두 돌려받습니다.</div>`;}
     else if(e.team===0&&BLD[e.kind].trains)h+=`<div class="hint">우클릭(모바일은 탭)으로 집결지를 정할 수 있습니다.</div>`;
   }
   el.innerHTML=h;
