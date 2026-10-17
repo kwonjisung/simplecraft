@@ -473,7 +473,7 @@ kbd{font-family:var(--f-mono);font-size:11.5px;border:1px solid var(--line);bord
           <li>좌클릭 선택, 드래그로 범위 선택, 더블클릭으로 같은 유닛 모두 선택</li>
           <li>우클릭: 땅은 이동, 적은 공격, 미네랄은 채광, 생산 건물이면 집결지</li>
           <li>방향키나 화면 가장자리로 시점 이동, 미니맵 클릭으로 바로 이동</li>
-          <li>단축키 <kbd>Q</kbd><kbd>W</kbd><kbd>E</kbd><kbd>R</kbd> 생산·건설, <kbd>A</kbd> 공격 이동, <kbd>S</kbd> 정지, <kbd>Esc</kbd> 취소(건물 선택 시 생산 대기 맨 끝부터 취소), <kbd>M</kbd> 소리</li>
+          <li>단축키 <kbd>Q</kbd><kbd>W</kbd><kbd>E</kbd><kbd>R</kbd> 생산·건설, <kbd>A</kbd> 공격 이동, <kbd>S</kbd> 정지, <kbd>Esc</kbd> 취소 — 짓는 중인 건물·생산 대기 맨 끝·일꾼 건설 예약 순, <kbd>M</kbd> 소리</li>
         </ul></div>
         <div><h4>모바일</h4><ul>
           <li>탭으로 선택, 선택한 뒤 땅을 탭하면 이동</li>
@@ -1205,7 +1205,13 @@ function cancelQueueAt(b,i){
   T(0).minerals+=c;recomputeSupply();lastSig='';uiAcc=1;
   Snd.play('click');toast(`${R(0).names[q.kind]} 생산 취소 · 미네랄 +${c}`);
 }
-function cancelBuild(b){T(0).minerals+=Math.round(T(0).S[b.kind].cost*.75);b.dead=true;}
+function cancelBuild(b){if(!b||b.dead||b.built||b.team!==0)return;const c=Math.round(T(0).S[b.kind].cost*.75);T(0).minerals+=c;b.dead=true;G.sel=G.sel.filter(id=>id!==b.id);
+  lastSig='';uiAcc=1;Snd.play('click');toast(`${R(0).names[b.kind]} 건설 취소 · 미네랄 +${c} (75%)`);boom(b);}
+// 일꾼이 아직 건설하러 가는 중이면 예약 취소 (비용 전액 환불)
+function cancelBuildOrders(ws){let n=0,c=0;
+  for(const u of ws){if(u.team!==0||u.state!=='build')continue;c+=T(0).S[u.bk].cost;T(0).minerals+=T(0).S[u.bk].cost;n++;
+    const pm=u.prevMin&&get(u.prevMin);if(pm)startGather(u,pm);else u.state='idle';}
+  if(n){lastSig='';uiAcc=1;Snd.play('click');toast(`건설 예약 ${n}건 취소 · 미네랄 +${c}`);}return n;}
 function startPlacing(kind){
   if(T(0).minerals<T(0).S[kind].cost){toast('미네랄이 부족합니다',true);return;}
   G.placing=kind;G.cmdMode=null;lastSig='';
@@ -1234,7 +1240,8 @@ function cmdList(){
         L.push({key,label:N[k],cost:S[k].cost,note:lock?`${N.barracks} 필요`:'',dis:lock||tm.minerals<S[k].cost,on:G.placing===k,act:()=>startPlacing(k)});});
     }
     L.push({key:'A',label:'공격 이동',on:G.cmdMode==='amove',act:()=>{G.cmdMode='amove';G.placing=null;lastSig='';}});
-    L.push({key:'S',label:'정지',act:()=>units.forEach(u=>{u.state='idle';u.resume=null;})});
+    if(units.some(u=>u.state==='build'))L.push({key:'X',label:'건설 예약 취소',act:()=>cancelBuildOrders(units)});
+    L.push({key:'S',label:'정지',act:()=>{cancelBuildOrders(units);units.forEach(u=>{u.state='idle';u.resume=null;});}});
     return L;
   }
   const b=own[0];
@@ -1351,9 +1358,15 @@ window.addEventListener('keydown',e=>{
   if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(k)){keys.add(k);e.preventDefault();return;}
   if(k==='Escape'){
     if(G.placing||G.cmdMode){G.placing=null;G.cmdMode=null;lastSig='';return;}
-    // 건물이 선택돼 있으면 생산 대기열의 맨 끝부터 하나씩 취소
-    const bq=ownSel().filter(e=>e.type==='b'&&e.built&&e.queue.length);
-    if(bq.length){const b=bq[bq.length-1];cancelQueueAt(b,b.queue.length-1);}
+    const own=ownSel();
+    // 1) 짓고 있는 건물 → 건설 취소 (75% 환불)
+    const ub=own.filter(e=>e.type==='b'&&!e.built);
+    if(ub.length){cancelBuild(ub[ub.length-1]);return;}
+    // 2) 생산 중인 건물 → 대기열 맨 끝부터 하나씩 취소
+    const bq=own.filter(e=>e.type==='b'&&e.built&&e.queue.length);
+    if(bq.length){const b=bq[bq.length-1];cancelQueueAt(b,b.queue.length-1);return;}
+    // 3) 건설하러 가는 일꾼 → 예약 취소 (전액 환불)
+    cancelBuildOrders(own.filter(e=>e.type==='u'));
     return;}
   if(k===' '){e.preventDefault();goHome();return;}
   if(k==='p'||k==='P'){togglePause();return;}
@@ -2119,7 +2132,7 @@ function renderInfo(){
     const st=e.state==='gather'?GPH[e.phase]:STATE[e.state];
     const atk=S.heal?`치유 <b>${Math.round(S.heal)}/초</b>`:`공격 <b>${Math.round(S.dmg)}</b> · 사거리 <b>${S.range>40?Math.round(S.range):'근접'}</b>`;
     h+=`<div class="stats">${atk} · 방어 <b>${S.armor||0}</b> · 속도 <b>${Math.round(S.speed)}</b>${S.splash?' · <b>범위 피해</b>':''}${S.fly?' · <b>비행</b>':''}${S.vsWorker?' · <b>일꾼 추가 피해</b>':''} · ${st}${e.carry?` · 미네랄 ${e.carry} 운반`:''}</div>`;
-  }else if(!e.built){h+=`<div class="stats">건설 중 <b>${Math.floor(e.prog*100)}%</b></div>`;}
+  }else if(!e.built){h+=`<div class="stats">건설 중 <b>${Math.floor(e.prog*100)}%</b></div>`;if(e.team===0)h+=`<div class="hint">Esc 또는 ‘건설 취소’로 취소하면 미네랄 75%를 돌려받습니다.</div>`;}
   else{
     if(BLD[e.kind].sup)h+=`<div class="stats">보급 <b>+${BLD[e.kind].sup}</b></div>`;
     if(e.kind==='turret')h+=`<div class="stats">공격 <b>${Math.round(S.dmg)}</b> · 사거리 <b>${Math.round(S.range)}</b> · 자동 공격</div>`;
