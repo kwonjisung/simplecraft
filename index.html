@@ -204,6 +204,91 @@ button:focus-visible,summary:focus-visible{outline:2px solid var(--ore);outline-
   .help .cols{grid-template-columns:minmax(0,1fr)}
 }
 @media (prefers-reduced-motion:reduce){.go::after{animation:none}}
+/* ===== 분석 화면 ===== */
+#anz{position:fixed;inset:0;z-index:30;overflow:auto;background:#05090b;-webkit-user-select:text;user-select:text}
+.anz-in{max-width:1000px;margin:0 auto;padding-block:calc(20px + env(safe-area-inset-top,0px)) 60px;padding-inline:16px;display:flex;flex-direction:column;gap:18px}
+.anz-hd{position:sticky;top:0;z-index:2;display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding-block:10px;background:#05090b;border-bottom:1px solid var(--line)}
+.anz-hd .k{margin:0;font-family:"Orbitron",var(--f-mono);font-size:11px;letter-spacing:.3em;color:var(--ore)}
+.anz-hd h2{margin:4px 0 4px;font-family:var(--f-display);font-weight:400;font-size:clamp(26px,4vw,38px);line-height:1.1;text-wrap:balance}
+.anz-hd .sub{margin:0;color:var(--dim);font-size:13.5px}
+.anz-x{flex:none;background:var(--console-2);border:1px solid var(--line);border-radius:6px;padding:8px 12px;cursor:pointer}
+.anz-x:hover{border-color:var(--ore)}
+#anz .live{margin:0;font-size:12.5px;color:var(--dim);font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+#anz .live b{color:var(--ore);font-family:var(--f-body);margin-right:8px}
+.kpis{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}
+.kpi{background:var(--console-2);border:1px solid var(--line);border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.kpi b{font-family:var(--f-mono);font-size:22px;color:var(--ink);font-variant-numeric:tabular-nums;white-space:nowrap}
+.kpi b small{font-size:11px;color:var(--dim);margin-left:3px;font-family:var(--f-body)}
+.kpi span{font-size:11.5px;color:var(--dim)}
+.anz-nav{display:flex;flex-wrap:wrap;gap:6px}
+.anz-nav a{font-size:12.5px;color:var(--ink);text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:4px 11px;background:rgba(19,28,31,.8)}
+.anz-nav a:hover{border-color:var(--ore);color:var(--ore)}
+#anz section{display:flex;flex-direction:column;gap:12px;padding-top:18px;border-top:1px solid var(--line);scroll-margin-top:110px}
+#anz h3{margin:0;font-family:var(--f-display);font-weight:400;font-size:24px;display:flex;align-items:baseline;gap:10px}
+#anz h3 em{font-style:normal;font-family:var(--f-mono);font-size:13px;color:var(--ore)}
+#anz .lead{margin:0;max-width:68ch;color:#c7d3cf;line-height:1.65;font-size:14px}
+#anz .lead b{color:var(--ink)}
+#anz .scroll{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:#0b1214}
+.anz-svg{display:block;width:100%;min-width:720px;height:auto;font-family:var(--f-body)}
+#anz .scroll.small .anz-svg{min-width:520px}
+#anz .legend{display:flex;flex-wrap:wrap;gap:14px;font-size:12px;color:var(--dim)}
+#anz .legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.pipe{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:12px}
+.lane{display:flex;flex-direction:column;gap:5px;background:#0b1214;border:1px solid var(--line);border-radius:8px;padding:12px}
+.lane.draw{border-color:color-mix(in srgb,var(--ore) 40%,var(--line))}
+.lane-h{font-family:var(--f-mono);font-size:11px;letter-spacing:.15em;color:var(--warn,#e8c547);margin-bottom:4px}
+.step{display:flex;gap:10px;align-items:baseline;font-size:13px;padding:5px 8px;border-radius:5px;background:rgba(255,255,255,.03)}
+.step b{flex:none;width:22px;font-family:var(--f-mono);color:var(--ore);font-variant-numeric:tabular-nums}
+.ai-grid{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:14px}
+.ladder{margin:0;padding:0;list-style:none;counter-reset:l;display:flex;flex-direction:column;gap:5px}
+.ladder li{counter-increment:l;display:grid;grid-template-columns:28px 7.5em minmax(0,1fr);gap:8px;align-items:baseline;padding:7px 10px;background:linear-gradient(90deg,rgba(167,123,243,.14),rgba(167,123,243,.02));border-left:3px solid #a77bf3;border-radius:4px;font-size:13px}
+.ladder li::before{content:counter(l);font-family:var(--f-mono);color:#c9b2ff;font-weight:600}
+.ladder li span{color:var(--dim)}
+#anz .side{display:flex;flex-direction:column;gap:12px;min-width:0}
+#anz .card{background:var(--console-2);border:1px solid var(--line);border-radius:8px;padding:12px 14px;font-size:13px;line-height:1.6;min-width:0}
+#anz .card h4{margin:0 0 6px;font-size:13px;color:var(--ore)}
+#anz .card p{margin:0}
+#anz .card .tiny{font-size:11.5px;color:var(--dim);margin-top:6px}
+#anz .card table{border-collapse:collapse;width:100%;font-size:12.5px;font-variant-numeric:tabular-nums}
+#anz .card th,#anz .card td{padding:4px 6px;text-align:right;border-bottom:1px solid var(--line)}
+#anz .card th:first-child,#anz .card td:first-child{text-align:left;color:var(--dim)}
+.prob{display:flex;flex-direction:column;gap:5px;margin-top:8px}
+.prob div{display:grid;grid-template-columns:5em minmax(0,1fr) 3em;gap:8px;align-items:center;font-size:12px}
+.prob i{display:block;height:8px;background:#a77bf3;border-radius:2px}
+.prob b{font-family:var(--f-mono);text-align:right}
+.chain{display:flex;flex-wrap:wrap;align-items:stretch;gap:6px}
+.chain .link{flex:1 1 140px;display:flex;flex-direction:column;gap:3px;background:var(--console-2);border:1px solid var(--line);border-top:3px solid var(--alert);border-radius:6px;padding:9px 11px;font-size:12.5px;min-width:0}
+.chain .link b{font-size:14px}
+.chain .link span{color:var(--dim)}
+.chain .arr{align-self:center;font-style:normal;color:var(--alert);font-size:20px}
+#anz .ex{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+#anz .hl{color:var(--ore)}
+#anz .sub-h{margin:6px 0 0;font-size:15px}
+.bal{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:12px;align-items:center}
+.loop{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;font-size:13px;color:#c7d3cf}
+.stages{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.stages figure{margin:0;display:flex;flex-direction:column;gap:6px;align-items:center}
+.stages canvas{width:100%;max-width:150px;height:auto;aspect-ratio:1;border-radius:8px;border:1px solid var(--line)}
+.stages figcaption{font-size:12.5px;color:var(--dim);text-align:center}
+#anz .note{margin:0;font-size:13px;color:var(--dim);max-width:70ch}
+.flow{display:flex;flex-wrap:wrap;align-items:stretch;gap:6px}
+.fnode{flex:1 1 120px;display:flex;flex-direction:column;gap:3px;background:var(--console-2);border:1px solid var(--line);border-radius:8px;padding:10px;font-size:12px;color:var(--dim);min-width:0}
+.fnode b{font-size:14px;color:var(--ink)}
+.fnode .fk{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.12em}
+.fnode.blue{border-top:3px solid #6fa8dc}.fnode.blue .fk{color:#6fa8dc}
+.fnode.ai{border-top:3px solid #a77bf3;background:color-mix(in srgb,#a77bf3 10%,var(--console-2))}.fnode.ai .fk{color:#c9b2ff}
+.fnode.ore{border-top:3px solid var(--ore)}.fnode.ore .fk{color:var(--ore)}
+.fnode.dim{border-top:3px solid var(--dim)}
+.fnode.ok{border-top:3px solid var(--ok)}.fnode.ok .fk{color:var(--ok)}
+.farr{align-self:center;font-style:normal;color:var(--dim)}
+#anz .ext{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+#anz .ext ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:4px}
+#anz .ext li::before{display:inline-block;width:18px;font-weight:700}
+#anz .ext li.y::before{content:"✓";color:var(--ok)}
+#anz .ext li.n::before{content:"✕";color:var(--alert)}
+.pill.anzp .ic{stroke:#c9b2ff;filter:drop-shadow(0 0 4px rgba(167,123,243,.5))}
+@media (max-width:760px){.anz-hd .sub{display:none}.anz-hd h2{font-size:20px}#anz section{scroll-margin-top:80px}.kpi b{font-size:18px}.kpis{grid-template-columns:repeat(3,minmax(0,1fr))}.pipe,.ai-grid,.bal,#anz .ex,#anz .ext{grid-template-columns:minmax(0,1fr)}.stages{grid-template-columns:repeat(2,minmax(0,1fr))}.farr,.chain .arr{display:none}.ladder li{grid-template-columns:24px minmax(0,1fr)}.ladder li span{grid-column:2}}
+@media (prefers-reduced-motion:reduce){#anz *{scroll-behavior:auto}}
 .overlay{position:fixed;inset:0;background:radial-gradient(120% 90% at 20% 0%,#1d2b27 0%,#0b1012 60%);z-index:10;overflow:auto;padding-block:max(24px,env(safe-area-inset-top,0px));padding-inline:16px}
 .menu-in{max-width:980px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
 .eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--ore);margin:0}
@@ -313,6 +398,7 @@ kbd{font-family:var(--f-mono);font-size:11.5px;border:1px solid var(--line);bord
     <button class="tbtn" id="bSpeed" title="게임 속도">1×</button>
     <button class="tbtn" id="bPause" title="일시정지 (P)">일시정지</button>
     <button class="tbtn" id="bSound" title="효과음 켜기/끄기 (M)">소리 켬</button>
+    <button class="tbtn" id="bAnz" title="작동 원리 분석">분석</button>
     <button class="tbtn hide-sm" id="bMenu">종족 선택</button>
   </div>
   <div id="view">
@@ -361,6 +447,7 @@ kbd{font-family:var(--f-mono);font-size:11.5px;border:1px solid var(--line);bord
         <button class="pill" data-pop="popMatch"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4l9.5 9.5M4 4v3.5M4 4h3.5"/><path d="M20 4l-9.5 9.5M20 4v3.5M20 4h-3.5"/><path d="M11 16l-3 3M13 16l3 3M6.5 14.5l3 3M17.5 14.5l-3 3"/></svg><small>대전</small><span id="pMatch">1 : 1</span></button>
         <button class="pill" data-pop="popDiff"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 17a8 8 0 1 1 15 0"/><path d="M12 17l4-6"/><circle cx="12" cy="17" r="1.6" class="f"/><path d="M7 13.2l-1.2-.7M12 9V7.6M17 13.2l1.2-.7"/></svg><small>난이도</small><span id="pDiff">보통</span></button>
         <button class="pill tog on" id="pSound" role="switch" aria-checked="true" aria-label="소리"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13L7.5 14.5H4z" class="f2"/><path class="wv" d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/><path class="mute" d="M15.5 9.5l5 5M20.5 9.5l-5 5"/></svg><small>소리</small><span class="sw" aria-hidden="true"><i></i></span></button>
+        <button class="pill anzp" id="pAnz" title="이 게임의 작동 원리 보기"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="6" rx="1.2"/><rect x="14" y="3" width="7" height="6" rx="1.2"/><rect x="8.5" y="15" width="7" height="6" rx="1.2"/><path d="M6.5 9v3h11V9M12 12v3"/></svg><small>분석</small><span>작동 원리</span></button>
         <button class="pill" data-pop="popHelp"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M9.6 9.6a2.5 2.5 0 1 1 3.4 2.3c-.7.3-1 .8-1 1.5v.6"/><circle cx="12" cy="16.9" r="1.1" class="f"/></svg><small>도움말</small><span>조작법</span></button>
       </div>
       <span class="sp"></span>
@@ -414,6 +501,18 @@ kbd{font-family:var(--f-mono);font-size:11.5px;border:1px solid var(--line);bord
       <button class="start" id="againBtn">다시 하기</button>
       <button class="ghost" id="toMenuBtn">종족 선택</button>
     </div>
+  </div>
+</div>
+
+<div id="anz" hidden role="dialog" aria-modal="true" aria-label="분석: 심플크래프트 작동 원리">
+  <div class="anz-in">
+    <header class="anz-hd">
+      <div><p class="k">ANALYSIS · 분석</p><h2>심플크래프트는 이렇게 돌아갑니다</h2>
+      <p class="sub">파일 하나, 서버 없음. 브라우저가 1초에 약 60번 ‘판단 → 계산 → 그리기’를 반복합니다.</p></div>
+      <button class="anz-x" id="anzClose">닫기 ✕</button>
+    </header>
+    <p class="live" id="anzLive"></p>
+    <div id="anzBody"></div>
   </div>
 </div>
 
@@ -2219,6 +2318,172 @@ $('#bSpeed').addEventListener('click',()=>{if(!G)return;G.speed=G.speed===1?1.5:
 $('#bHome').addEventListener('click',()=>G&&goHome());
 $('#bArmy').addEventListener('click',()=>G&&selectArmy());
 $('#bIdle').addEventListener('click',()=>G&&selectIdle());
+
+/* ---------- 분석버튼: 이 게임이 작동하는 원리를 그림으로 ---------- */
+const ANZ_C={ore:'#5fe3d0',ink:'#e4ece6',dim:'#8b9d98',line:'#2c4048',box:'#121c1f',ai:'#a77bf3',warn:'#e8c547',ok:'#86e08f',alert:'#ff6b5b',blue:'#6fa8dc'};
+function svgWrap(id,w,h,body){
+  return `<svg class="anz-svg" viewBox="0 0 ${w} ${h}" role="img" aria-labelledby="${id}t"><title id="${id}t">${id}</title>
+  <defs>${['ore','ai','warn','dim','ok','alert','blue'].map(k=>`<marker id="${id}-${k}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="${ANZ_C[k]}"/></marker>`).join('')}</defs>${body}</svg>`;
+}
+function sBox(x,y,w,h,title,sub,col,fill){col=col||ANZ_C.ore;
+  return `<g><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="6" fill="${fill||ANZ_C.box}" stroke="${col}" stroke-width="1.5"/>
+  <text x="${x+12}" y="${y+22}" fill="${ANZ_C.ink}" font-size="14" font-weight="700">${title}</text>
+  ${(sub||'').split('\n').map((l,i)=>`<text x="${x+12}" y="${y+41+i*16}" fill="${ANZ_C.dim}" font-size="11.5">${l}</text>`).join('')}</g>`;}
+function sArrow(id,x1,y1,x2,y2,k,label,lx,ly,dash){k=k||'ore';
+  return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${ANZ_C[k]}" stroke-width="1.6" ${dash?'stroke-dasharray="5 4"':''} marker-end="url(#${id}-${k})"/>`+
+  (label?`<text x="${lx??(x1+x2)/2}" y="${ly??(y1+y2)/2-6}" fill="${ANZ_C[k]}" font-size="11" text-anchor="middle">${label}</text>`:'');}
+function sPath(id,d,k,label,lx,ly){k=k||'ore';return `<path d="${d}" fill="none" stroke="${ANZ_C[k]}" stroke-width="1.6" marker-end="url(#${id}-${k})"/>`+(label?`<text x="${lx}" y="${ly}" fill="${ANZ_C[k]}" font-size="11" text-anchor="middle">${label}</text>`:'');}
+
+function anzArch(){const id='arch';let b='';
+  b+=sBox(20,40,190,78,'플레이어 입력','마우스 · 터치 · 키보드\n→ 선택, 명령(issue)',ANZ_C.blue);
+  b+=sBox(20,150,190,78,'첫 화면 설정','종족 · 맵 · 대전 · 난이도\n→ newGame()',ANZ_C.blue);
+  b+=sBox(20,260,190,62,'저장(브라우저)','소리 켜기/끄기만 기억',ANZ_C.dim);
+  b+=sBox(270,16,380,58,'게임 루프  frame()','requestAnimationFrame · 1초에 약 60번',ANZ_C.warn);
+  b+=sBox(270,110,180,82,'시뮬레이션  sim(dt)','이동 · 채광 · 전투\n생산 · 충돌 · 승패',ANZ_C.ore);
+  b+=sBox(470,110,180,82,'컴퓨터 상대  aiTick()','규칙 기반 판단\n팀마다 0.8초에 1번',ANZ_C.ai);
+  b+=`<rect x="270" y="230" width="380" height="122" rx="8" fill="#0e1719" stroke="${ANZ_C.ore}" stroke-width="2"/>
+  <text x="284" y="254" fill="${ANZ_C.ink}" font-size="15" font-weight="700">게임 상태  G</text>
+  <text x="284" y="272" fill="${ANZ_C.dim}" font-size="11.5">모든 것이 들어 있는 하나의 자바스크립트 객체</text>`;
+  [['ents','유닛·건물·미네랄'],['teams','자원·보급·기록'],['proj','날아가는 탄'],['fx','폭발·치유 효과'],['hist','5초마다 기록']].forEach(([k,v],i)=>{
+    const x=284+(i%3)*120,y=286+Math.floor(i/3)*30;b+=`<rect x="${x}" y="${y}" width="112" height="24" rx="4" fill="#16262a" stroke="${ANZ_C.line}"/><text x="${x+8}" y="${y+16}" fill="${ANZ_C.ore}" font-size="11" font-family="monospace">${k}</text><text x="${x+46}" y="${y+16}" fill="${ANZ_C.dim}" font-size="10.5">${v}</text>`;});
+  b+=sBox(710,30,190,66,'그리기  render()','지형 → 건물 → 유닛\n→ 탄 → 효과 → 체력바',ANZ_C.ore);
+  b+=sBox(710,116,190,66,'입체 그래픽  draw3D','빛 · 옆면 · 그림자\n같은 모양은 캐시',ANZ_C.ore);
+  b+=sBox(710,202,190,58,'화면 정보  uiTick()','자원 · 명령 버튼 · 미니맵',ANZ_C.ore);
+  b+=sBox(710,280,190,58,'효과음  Snd','파일 없이 소리 합성',ANZ_C.ore);
+  b+=sBox(710,358,190,58,'결과 화면  finish()','전체 기록 비교 그래프',ANZ_C.ore);
+  b+=sArrow(id,210,79,270,300,'blue','명령',236,170);
+  b+=sArrow(id,210,189,270,320,'blue','',0,0);
+  b+=sArrow(id,360,74,360,110,'warn');b+=sArrow(id,560,74,560,110,'warn');
+  b+=sArrow(id,650,45,710,60,'warn','매 프레임',682,42);
+  b+=sArrow(id,360,192,360,230,'ore','읽고 바꿈',408,215);b+=sArrow(id,560,192,560,230,'ai','명령 내림',604,215);
+  b+=sArrow(id,650,262,710,74,'ore','',0,0);b+=sArrow(id,650,290,710,230,'ore','',0,0);
+  b+=sArrow(id,650,320,710,385,'ore','승패 결정',672,368);
+  b+=sArrow(id,805,96,805,116,'ore');
+  b+=sArrow(id,450,151,710,305,'dim','',0,0,true);
+  return svgWrap(id,920,430,b);}
+
+function anzState(){const id='fsm';let b='';
+  const N={idle:[330,150,'대기','idle'],move:[90,40,'이동','move'],amove:[90,250,'공격 이동','amove'],attack:[560,40,'공격','attack'],gather:[560,250,'채광','gather'],build:[330,300,'건설','build']};
+  for(const [k,[x,y,t,c]] of Object.entries(N))b+=`<rect x="${x}" y="${y}" width="140" height="56" rx="28" fill="${k==='idle'?'#1a2a2e':ANZ_C.box}" stroke="${k==='attack'?ANZ_C.alert:k==='gather'?ANZ_C.ore:k==='idle'?ANZ_C.ink:ANZ_C.blue}" stroke-width="${k==='idle'?2.4:1.6}"/><text x="${x+70}" y="${y+25}" text-anchor="middle" fill="${ANZ_C.ink}" font-size="14" font-weight="700">${t}</text><text x="${x+70}" y="${y+42}" text-anchor="middle" fill="${ANZ_C.dim}" font-size="11" font-family="monospace">${c}</text>`;
+  b+=sArrow(id,330,165,232,82,'blue','땅 우클릭',268,108);b+=sArrow(id,160,96,330,175,'dim','도착',230,152);
+  b+=sArrow(id,330,195,232,262,'blue','A + 클릭',268,248);b+=`<text x="160" y="328" text-anchor="middle" fill="${ANZ_C.alert}" font-size="11">가다가 적이 보이면 → 공격</text>`;
+  b+=sArrow(id,470,160,560,82,'alert','적 발견·피격',528,110);b+=sArrow(id,560,96,470,182,'dim','목표 사라짐',500,152);
+  b+=sArrow(id,470,190,560,262,'ore','미네랄 우클릭',540,215);b+=sArrow(id,400,206,400,300,'blue','건물 배치',440,262);
+  b+=sArrow(id,470,328,560,295,'dim','완성 후 복귀',520,330);
+  b+=`<rect x="740" y="236" width="170" height="86" rx="6" fill="#0e1719" stroke="${ANZ_C.line}"/><text x="752" y="256" fill="${ANZ_C.ore}" font-size="12" font-weight="700">채광 안쪽 3단계</text>
+  <text x="752" y="276" fill="${ANZ_C.dim}" font-size="11.5">① 미네랄로 이동</text><text x="752" y="294" fill="${ANZ_C.dim}" font-size="11.5">② 1.3초 캐기 (8개)</text><text x="752" y="312" fill="${ANZ_C.dim}" font-size="11.5">③ 본진으로 운반 → ①</text>`;
+  b+=sArrow(id,700,278,740,278,'ore');
+  b+=`<rect x="740" y="40" width="170" height="78" rx="6" fill="#0e1719" stroke="${ANZ_C.ok}" stroke-dasharray="4 3"/><text x="752" y="60" fill="${ANZ_C.ok}" font-size="12" font-weight="700">치유 유닛은 항상</text><text x="752" y="80" fill="${ANZ_C.dim}" font-size="11.5">상태와 상관없이 0.5초마다</text><text x="752" y="98" fill="${ANZ_C.dim}" font-size="11.5">가장 다친 아군을 회복</text>`;
+  return svgWrap(id,920,380,b);}
+
+function anzEconomy(){const id='eco';let b='';const cx=290,cy=200,R=150,BW=164,BH=66;
+  const nodes=[['일꾼 채광','1.3초에 8개\n(유목민은 0.93초)'],['본진에 내려놓기','미네랄 +8\n(컴퓨터는 난이도 배율)'],['생산·건설에 지출','유닛 50~340\n건물 100~400'],['보급 확보','본진 +10 · 보급고 +8\n최대 200']];
+  const off=i=>i%2===0?Math.asin((BW/2+6)/R):Math.asin((BH/2+6)/R);
+  b+=`<circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="${ANZ_C.line}" stroke-width="1.5" stroke-dasharray="4 7"/>`;
+  for(let i=0;i<4;i++){const a0=-Math.PI/2+i*Math.PI/2,a1=a0+Math.PI/2,s1=a0+off(i),e1=a1-off((i+1)%4);
+    b+=sPath(id,`M${cx+Math.cos(s1)*R} ${cy+Math.sin(s1)*R} A${R} ${R} 0 0 1 ${cx+Math.cos(e1)*R} ${cy+Math.sin(e1)*R}`,'ore');}
+  nodes.forEach(([t,s],i)=>{const a=-Math.PI/2+i*Math.PI/2,x=cx+Math.cos(a)*R,y=cy+Math.sin(a)*R;b+=sBox(x-BW/2,y-BH/2,BW,BH,t,s,i===2?ANZ_C.warn:ANZ_C.ore);});
+  b+=`<text x="${cx}" y="${cy-4}" text-anchor="middle" fill="${ANZ_C.ink}" font-size="15" font-weight="700">경제 순환</text><text x="${cx}" y="${cy+15}" text-anchor="middle" fill="${ANZ_C.dim}" font-size="11">일꾼이 늘수록 빨라짐</text>`;
+  b+=sBox(560,70,330,94,'무한 광맥 맵','미네랄을 캐도 줄지 않음\n→ 순환이 끊기지 않아 장기전이 됨',ANZ_C.warn);
+  b+=sBox(560,190,330,108,'보급이 막히면','보급 사용량 + 새 유닛 > 보급 한도\n→ 생산 거부, "보급이 부족합니다"\n컴퓨터는 여유가 4 이하가 되면 미리 건설',ANZ_C.alert);
+  return svgWrap(id,920,400,b);}
+
+function anzBalanceBars(){
+  const rows=[['철벽 연합',.493,'#6fa8dc'],['붉은 군락',.489,'#e0525a'],['성광 교단',.513,'#f2c94c'],['이끼 숲',.503,'#6cc46c'],['모래바람 유목민',.493,'#e09a45'],['심연 공학',.510,'#a77bf3']];
+  const before=[.69,.58,.54,.38,.34,.46];
+  const X=v=>150+(v-.3)/.4*360;let b='';
+  for(const v of [.3,.4,.5,.6,.7]){b+=`<line x1="${X(v)}" y1="20" x2="${X(v)}" y2="232" stroke="${v===.5?ANZ_C.ink:ANZ_C.line}" stroke-width="${v===.5?1.4:1}" ${v===.5?'':'stroke-dasharray="3 4"'}/><text x="${X(v)}" y="250" text-anchor="middle" fill="${ANZ_C.dim}" font-size="11">${v.toFixed(1)}</text>`;}
+  rows.forEach(([n,v,c],i)=>{const y=30+i*34;
+    b+=`<text x="140" y="${y+15}" text-anchor="end" fill="${ANZ_C.ink}" font-size="12.5">${n}</text>`;
+    b+=`<rect x="${X(.3)}" y="${y+2}" width="${X(before[i])-X(.3)}" height="7" rx="2" fill="${ANZ_C.dim}" opacity=".45"/>`;
+    b+=`<rect x="${X(.3)}" y="${y+11}" width="${X(v)-X(.3)}" height="11" rx="2" fill="${c}"/><circle cx="${X(v)}" cy="${y+16.5}" r="4" fill="${c}" stroke="#0b1012"/>`;
+    b+=`<text x="${X(v)+10}" y="${y+21}" fill="${ANZ_C.ink}" font-size="11.5" font-family="monospace">${v.toFixed(3)}</text>`;});
+  b+=`<rect x="150" y="266" width="14" height="7" fill="${ANZ_C.dim}" opacity=".45"/><text x="170" y="273" fill="${ANZ_C.dim}" font-size="11">조정 전</text><rect x="240" y="263" width="14" height="11" fill="${ANZ_C.ore}"/><text x="260" y="273" fill="${ANZ_C.dim}" font-size="11">조정 후 (0.5 = 완전 균형)</text>`;
+  return `<svg class="anz-svg" viewBox="0 0 600 284" role="img" aria-label="종족별 전투 점수 조정 전후">${b}</svg>`;}
+
+function anzBuild(){
+  const lines=1817,fns=113;
+  const el=$('#anzBody');if(el.dataset.built)return;el.dataset.built='1';
+  el.innerHTML=`
+  <div class="kpis">
+    ${[['1','파일','index.html 하나'],['~1,800','줄','자바스크립트'],[String(fns),'개','함수'],['6 × 8','유닛','종족 × 종류'],['0','개','그림·소리 파일'],['0','곳','서버·AI 호출']].map(([v,u,l])=>`<div class="kpi"><b>${v}<small>${u}</small></b><span>${l}</span></div>`).join('')}
+  </div>
+  <nav class="anz-nav" aria-label="분석 목차">${[['a1','전체 구조'],['a2','한 프레임'],['a3','유닛의 두뇌'],['a4','경제 순환'],['a5','컴퓨터 상대'],['a6','전투 계산'],['a7','입체 그래픽'],['a8','만들어진 과정']].map(([h,t])=>`<a href="#${h}" data-go="${h}">${t}</a>`).join('')}</nav>
+
+  <section id="a1"><h3><em>01</em>전체 구조</h3><p class="lead">모든 정보는 <b>게임 상태 G</b> 하나에 모입니다. 입력과 컴퓨터 상대는 G를 바꾸고, 시뮬레이션은 G를 계산하고, 화면은 G를 읽어서 그립니다.</p>
+    <div class="scroll">${anzArch()}</div>
+    <div class="legend"><span><i style="background:${ANZ_C.blue}"></i>사람이 넣는 것</span><span><i style="background:${ANZ_C.warn}"></i>시계(반복)</span><span><i style="background:${ANZ_C.ore}"></i>게임 계산·출력</span><span><i style="background:${ANZ_C.ai}"></i>컴퓨터 상대 판단</span></div></section>
+
+  <section id="a2"><h3><em>02</em>한 프레임(약 0.016초)에 일어나는 일</h3><p class="lead">브라우저가 화면을 새로 그릴 때마다 아래 순서가 한 바퀴 돕니다. 게임 속도 2배면 계산 부분만 두 번 돕니다.</p>
+    <div class="pipe">
+      <div class="lane"><span class="lane-h">계산  sim()</span>${['경과 시간 dt 측정','유닛마다 상태 처리 (이동·채광·공격·치유)','건물 생산 진행 · 방어탑 사격','탄 이동 · 명중 · 범위 피해','겹친 유닛 밀어내기','파괴된 것 정리','보급 다시 계산','컴퓨터 판단 (팀마다 0.8초)','승패 확인 (0.5초)','기록 저장 (5초)'].map((t,i)=>`<div class="step"><b>${i+1}</b>${t}</div>`).join('')}</div>
+      <div class="lane draw"><span class="lane-h">출력</span>${['지형 그림 붙이기','미네랄 → 건물 → 유닛 (입체)','탄 · 폭발 · 치유선','체력·보호막 바','미니맵 · 자원 · 버튼 (0.15초)'].map((t,i)=>`<div class="step"><b>${i+11}</b>${t}</div>`).join('')}</div>
+    </div></section>
+
+  <section id="a3"><h3><em>03</em>유닛의 두뇌 — 상태 기계</h3><p class="lead">유닛은 늘 여섯 상태 중 하나입니다. 지금 상태에 맞는 일만 하고, 조건이 맞으면 다른 상태로 넘어갑니다. 전투 유닛은 0.3초마다 시야 안의 적을 찾습니다.</p>
+    <div class="scroll">${anzState()}</div></section>
+
+  <section id="a4"><h3><em>04</em>경제 순환</h3><p class="lead">게임의 엔진은 미네랄입니다. 캐고 → 내려놓고 → 쓰고 → 보급을 늘리는 고리가 빨리 돌수록 병력이 커집니다.</p>
+    <div class="scroll">${anzEconomy()}</div></section>
+
+  <section id="a5"><h3><em>05</em>컴퓨터 상대는 어떻게 생각할까</h3><p class="lead"><b>외부 AI나 언어 모델이 아닙니다.</b> 팀마다 0.8초에 한 번 아래 목록을 위에서부터 확인하는 <b>규칙 기반</b> 판단입니다. 건설을 하나 지시하면 그 차례의 판단은 끝납니다.</p>
+    <div class="ai-grid">
+      <ol class="ladder">
+        ${[['노는 일꾼','가장 가까운 미네랄로 보냄'],['일꾼 보충','본진당 10명, 최대 22명까지'],['보급고','남은 보급이 4 이하가 되기 전에'],['기본 공장','처음 1개, 150초 뒤 난이도별 1·2·3개'],['고급 공장','쉬움 480초 · 보통 300초 · 어려움 220초부터'],['방어탑','120초 뒤, 난이도별 1~2개'],['확장','보통 이상, 360초 뒤 가까운 빈 자원 지대'],['병력 생산','기본 공장: 근접 42% · 원거리 42% · 중장갑 16%'],['기지 방어','기지 420 안에 적이 오면 모두 공격 이동'],['공격 웨이브','병력이 목표 수(보통 7, 매번 +4) 이상이면 출격']].map(([t,s])=>`<li><b>${t}</b><span>${s}</span></li>`).join('')}
+      </ol>
+      <div class="side">
+        <div class="card"><h4>공격 대상 고르기</h4><p>개인전에서는 살아 있는 적 팀 중 하나를 <b>거리에 반비례하는 확률</b>로 고릅니다. 가까운 적이 잘 걸리지만, 모두가 한 명만 노리지는 않습니다.</p>
+          <div class="prob">${[['가까운 적',.5],['중간 적',.3],['먼 적',.2]].map(([n,p])=>`<div><span>${n}</span><i style="width:${p*100}%"></i><b>${Math.round(p*100)}%</b></div>`).join('')}</div><p class="tiny">예: 거리 1 : 1.7 : 2.5일 때</p></div>
+        <div class="card"><h4>난이도 차이</h4><table><tr><th></th><th>쉬움</th><th>보통</th><th>어려움</th></tr>
+          <tr><td>채광 배율</td><td>0.7</td><td>1.0</td><td>1.3</td></tr><tr><td>첫 공격</td><td>330초</td><td>230초</td><td>160초</td></tr><tr><td>첫 웨이브</td><td>5</td><td>7</td><td>8</td></tr><tr><td>시작 자원</td><td>150</td><td>150</td><td>200</td></tr></table></div>
+      </div>
+    </div></section>
+
+  <section id="a6"><h3><em>06</em>전투 계산</h3><p class="lead">한 번 맞을 때마다 같은 순서로 계산합니다.</p>
+    <div class="chain">${[['공격력','유닛 기본값 × 종족 보정'],['× 일꾼 보너스','정찰 유닛은 일꾼에게 2.5배'],['− 방어력','단, 최소 30%는 들어감'],['→ 보호막 먼저','성광 교단: 3초 쉬면 초당 15% 충전'],['→ 체력','0 이하가 되면 파괴']].map(([t,s],i)=>`<div class="link"><b>${t}</b><span>${s}</span></div>${i<4?'<i class="arr">›</i>':''}`).join('')}</div>
+    <div class="ex">
+      <div class="card"><h4>예시 ① 방어력</h4><p>심연 공학 <b>공허 포수</b> 공격력 15 × 1.2 = <b>18</b><br>→ 철벽 연합 <b>강철 거신</b> 방어력 3 + 종족 1 + 전용 1 = <b>5</b><br>→ 실제 피해 <b class="hl">13</b></p></div>
+      <div class="card"><h4>예시 ② 범위 피해</h4><p>붉은 군락 <b>포자 투척충</b> 28 × 0.9 = <b>25</b><br>→ 맞은 대상 25, 반경 55 안의 다른 적은 <b class="hl">절반(12.6)</b>씩<br>→ 뭉쳐 있을수록 피해가 커짐</p></div>
+      <div class="card"><h4>회복 규칙</h4><p>치유 유닛: 0.5초마다 치유량의 절반<br>이끼 숲: 유닛 초당 1.5%, 건물 0.5% 자동 회복<br>비행 유닛: 건물·미네랄 위로 지나감</p></div>
+    </div>
+    <h4 class="sub-h">밸런스는 이렇게 맞췄습니다</h4>
+    <div class="bal"><div class="scroll small">${anzBalanceBars()}</div>
+      <ol class="loop"><li>같은 미네랄로 두 종족 군대 생성</li><li>15개 종족 쌍 × 군대 크기 3 × 구성 3 = 135가지 조건, 조건마다 여러 번 전투</li><li>남은 병력 가치로 점수 계산</li><li>종족 대표 수치를 조금씩 조정 → 반복</li></ol></div></section>
+
+  <section id="a7"><h3><em>07</em>입체 그래픽의 원리</h3><p class="lead">그림 파일은 하나도 없습니다. 위에서 본 모양을 코드로 그린 뒤, 네 단계를 겹쳐 입체처럼 보이게 합니다.</p>
+    <div class="stages">${['① 위에서 본 모양','② 왼쪽 위에서 빛','③ 어두운 옆면 쌓기','④ 높이만큼 그림자'].map((t,i)=>`<figure><canvas id="anzSt${i}" width="150" height="150"></canvas><figcaption>${t}</figcaption></figure>`).join('')}</div>
+    <p class="note">한 번 그린 모양은 각도·걸음 단계별로 저장(최대 450개)해 두고 다시 씁니다. 그래서 유닛이 수백 개여도 같은 그림을 매번 새로 그리지 않습니다.</p></section>
+
+  <section id="a8"><h3><em>08</em>만들어진 과정과 연결</h3><p class="lead">AI는 <b>만드는 과정</b>에서 쓰였고, 게임이 <b>실행되는 동안</b>에는 어떤 AI나 서버에도 연결하지 않습니다.</p>
+    <div class="flow">
+      ${[['요청','권지성','기능·디자인 아이디어','blue'],['코드 작성','Claude','게임 코드 작성·수정\n전투 시뮬레이션으로 밸런스','ai'],['결과물','index.html','HTML + CSS + JS 한 파일','ore'],['보관','GitHub','kwonjisung/simplecraft','dim'],['배포','Netlify','웹 주소로 공개','dim'],['실행','플레이어 브라우저','모든 계산을 브라우저에서','ok']].map(([k,t,s,c],i)=>`<div class="fnode ${c}"><span class="fk">${k}</span><b>${t}</b><span>${s.replace('\n','<br>')}</span></div>${i<5?'<i class="farr">→</i>':''}`).join('')}
+    </div>
+    <div class="ext">
+      <div class="card"><h4>실행 중 외부 연결</h4><ul><li class="y">Google Fonts — 글꼴만 불러옴</li><li class="n">서버 · 데이터베이스 없음</li><li class="n">AI API 호출 없음</li></ul></div>
+      <div class="card"><h4>브라우저 안에서 해결</h4><ul><li class="y">그림 — Canvas 2D로 직접 그림</li><li class="y">소리 — Web Audio로 실시간 합성</li><li class="y">저장 — 소리 설정만 브라우저에 기억</li></ul></div>
+    </div></section>`;
+  el.querySelectorAll('[data-go]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const t=el.querySelector('#'+a.dataset.go);if(t)t.scrollIntoView({behavior:'smooth',block:'start'});}));
+  anzStages();
+}
+function anzStages(){
+  const race=RACES[0],r=24,d=Math.min(2,window.devicePixelRatio||1);
+  const paint=g=>{g.rotate(-Math.PI/2);drawSprite(g,race,'heavy',r,0,{});};
+  for(let i=0;i<4;i++){const c=$('#anzSt'+i);c.width=150*d;c.height=150*d;const g=c.getContext('2d');g.setTransform(d,0,0,d,0,0);g.fillStyle='#18221f';g.fillRect(0,0,150,150);g.translate(70,72);
+    if(i===0){g.save();paint(g);g.restore();}
+    else draw3D(g,0,0,r,i>=2?7:0,i>=3?10:0,d,paint,{spec:i>=1?.2:0});}
+}
+function anzLive(){
+  const el=$('#anzLive');if(!G){el.textContent='게임을 시작하면 지금 판의 숫자가 여기에 나옵니다.';return;}
+  const u=G.ents.filter(e=>e.type==='u').length,bl=G.ents.filter(e=>e.type==='b').length;
+  el.innerHTML=`<b>지금 이 판</b> 경과 ${clock(G.t)} · 유닛 ${u} · 건물 ${bl} · 날아가는 탄 ${G.proj.length} · 저장된 그림 ${C3.size} · 팀 ${G.teams.length}`;
+}
+let anzWasPaused=false;
+function openAnz(){anzBuild();anzLive();anzWasPaused=G?G.paused:false;if(G)G.paused=true;$('#anz').hidden=false;$('#anz').scrollTop=0;closePops&&closePops();}
+function closeAnz(){$('#anz').hidden=true;if(G)G.paused=anzWasPaused;}
+$('#anzClose').addEventListener('click',closeAnz);
+$('#pAnz').addEventListener('click',e=>{e.stopPropagation();openAnz();});
+$('#bAnz').addEventListener('click',openAnz);
+window.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#anz').hidden){e.stopPropagation();closeAnz();}},true);
 
 /* ---------- loop ---------- */
 let last=performance.now();
