@@ -473,7 +473,7 @@ kbd{font-family:var(--f-mono);font-size:11.5px;border:1px solid var(--line);bord
           <li>좌클릭 선택, 드래그로 범위 선택, 더블클릭으로 같은 유닛 모두 선택</li>
           <li>우클릭: 땅은 이동, 적은 공격, 미네랄은 채광, 생산 건물이면 집결지</li>
           <li>방향키나 화면 가장자리로 시점 이동, 미니맵 클릭으로 바로 이동</li>
-          <li>단축키 <kbd>Q</kbd><kbd>W</kbd><kbd>E</kbd><kbd>R</kbd> 생산·건설, <kbd>A</kbd> 공격 이동, <kbd>S</kbd> 정지, <kbd>Esc</kbd> 취소, <kbd>M</kbd> 소리</li>
+          <li>단축키 <kbd>Q</kbd><kbd>W</kbd><kbd>E</kbd><kbd>R</kbd> 생산·건설, <kbd>A</kbd> 공격 이동, <kbd>S</kbd> 정지, <kbd>Esc</kbd> 취소(건물 선택 시 생산 대기 맨 끝부터 취소), <kbd>M</kbd> 소리</li>
         </ul></div>
         <div><h4>모바일</h4><ul>
           <li>탭으로 선택, 선택한 뒤 땅을 탭하면 이동</li>
@@ -1349,7 +1349,12 @@ window.addEventListener('keydown',e=>{
   if(e.target&&e.target.tagName==='BUTTON'&&(e.key===' '||e.key==='Enter'))return;
   const k=e.key;
   if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(k)){keys.add(k);e.preventDefault();return;}
-  if(k==='Escape'){G.placing=null;G.cmdMode=null;lastSig='';return;}
+  if(k==='Escape'){
+    if(G.placing||G.cmdMode){G.placing=null;G.cmdMode=null;lastSig='';return;}
+    // 건물이 선택돼 있으면 생산 대기열의 맨 끝부터 하나씩 취소
+    const bq=ownSel().filter(e=>e.type==='b'&&e.built&&e.queue.length);
+    if(bq.length){const b=bq[bq.length-1];cancelQueueAt(b,b.queue.length-1);}
+    return;}
   if(k===' '){e.preventDefault();goHome();return;}
   if(k==='p'||k==='P'){togglePause();return;}
   if(k==='m'||k==='M'){Snd.toggle();soundLabel();return;}
@@ -2122,7 +2127,7 @@ function renderInfo(){
       const mine=e.team===0;
       h+=`<div class="q">${e.queue.map((q,i)=>{const pr=i===0?`<i style="width:${q.t/T(e.team).S[q.kind].time*100}%"></i>`:'';
         return mine?`<button class="qi" data-qi="${i}" title="눌러서 취소 (미네랄 ${T(0).S[q.kind].cost} 돌려받음)">${race.names[q.kind]}<b aria-hidden="true">✕</b>${pr}</button>`:`<span>${race.names[q.kind]}${pr}</span>`;}).join('')}</div>`;
-      if(mine)h+=`<div class="hint">생산 대기 ${e.queue.length}/5 · 눌러서 취소하면 미네랄을 모두 돌려받습니다.</div>`;}
+      if(mine)h+=`<div class="hint">생산 대기 ${e.queue.length}/5 · 눌러서 취소, Esc는 맨 끝부터 취소 (미네랄 전부 환불)</div>`;}
     else if(e.team===0&&BLD[e.kind].trains)h+=`<div class="hint">우클릭(모바일은 탭)으로 집결지를 정할 수 있습니다.</div>`;
   }
   el.innerHTML=h;
