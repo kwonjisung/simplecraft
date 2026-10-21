@@ -113,6 +113,39 @@ button:focus-visible,summary:focus-visible{outline:2px solid var(--ore);outline-
 .cmd.on{border-color:var(--ore);background:#16302c}
 
 /* overlays */
+/* bottom briefing cards (시안 A) */
+.cardsA{flex:1 1 640px;display:flex;gap:10px;min-width:0;flex-wrap:wrap}
+.cardA{flex:1 1 210px;min-width:0;display:grid;grid-template-columns:auto minmax(0,1fr);gap:3px 12px;align-items:center;text-align:left;background:linear-gradient(180deg,rgba(18,30,34,.92),rgba(10,16,19,.92));border:1px solid #2c4048;padding:11px 14px;cursor:pointer;clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,0 100%);transition:border-color .15s,background .15s}
+.cardA:hover,.cardA.on{border-color:var(--ore)}
+.cardA.on{background:linear-gradient(180deg,rgba(20,44,46,.95),rgba(10,20,22,.95))}
+.cardA .vis{grid-row:span 3;display:grid;place-items:center;min-width:64px}
+.cardA .k{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--dim)}
+.cardA .k .ic{width:16px;height:16px;fill:none;stroke:var(--ore);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.cardA .chg{font-size:11px;color:var(--ore);margin-left:auto;white-space:nowrap}
+.cardA .v{font-family:var(--f-display);font-size:23px;line-height:1.05;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cardA .s{font-size:11.5px;color:var(--dim);min-width:0}
+.cardA canvas.mp{width:88px;height:60px;border:1px solid #2c4048;border-radius:3px;background:#0b1311;display:block}
+.bigvs{font-family:var(--f-mono);font-size:20px;font-weight:600;color:var(--ore);white-space:nowrap}
+.dial{width:64px;height:52px;display:block}
+.slots{display:flex;gap:4px;align-items:center;flex-wrap:wrap}
+.slots i{width:13px;height:13px;border-radius:3px;border:1px solid rgba(0,0,0,.4)}
+.slots em{font-style:normal;font-size:10.5px;color:var(--alert);margin-left:4px}
+.tailA{display:flex;align-items:center;gap:12px;margin-left:auto}
+.tailA .mini{display:flex;flex-direction:column;gap:4px}
+.tailA .mini .pill{padding:4px 10px;font-size:12px;justify-content:flex-start}
+.tailA .mini .pill .ic{width:16px;height:16px}
+.tailA .mini .pill span:not(.sw){display:none}
+.tailA .mini .pill .sw{margin-left:auto}
+#popMap .maps{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+#popMap .mapc{display:grid;grid-template-columns:92px minmax(0,1fr);column-gap:10px;row-gap:2px;padding:8px;align-items:start}
+#popMap .mapc canvas{grid-row:span 3;width:92px;height:auto;margin:0}
+#popMap .mapc .mt b{font-size:16px}
+#popMap .mapc .md{font-size:11.5px;line-height:1.4;color:var(--dim);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+#popMap{width:min(900px,calc(100% - 32px))}
+@media (max-width:760px){#popMap .maps{grid-template-columns:minmax(0,1fr)}}
+.mgh{grid-column:1/-1;margin:4px 0 -2px;font-size:12px;color:var(--dim);font-weight:500;letter-spacing:.04em}
+.mgh:first-child{margin-top:0}
+
 /* ===== command-center start screen ===== */
 #menu{--rc:#6fa8dc;position:fixed;inset:0;z-index:10;background:#03070a;overflow:auto;-webkit-user-select:none;user-select:none}
 #menuBg{position:fixed;inset:0;width:100%;height:100%;display:block}
@@ -199,6 +232,8 @@ button:focus-visible,summary:focus-visible{outline:2px solid var(--ore);outline-
   .cx-stage{height:220px;min-height:0}
   .ucard{padding:12px 14px;gap:7px}.ucard h2{font-size:22px}.ucard p{display:none}
   .cx-bar{position:sticky;bottom:0;padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px))}
+  .cardsA{flex-basis:100%;flex-wrap:nowrap;gap:6px}.cardA{flex:1 1 0;grid-template-columns:minmax(0,1fr);padding:8px 9px}.cardA .vis,.cardA .s,.cardA .chg{display:none}.cardA .v{font-size:16px}
+  .tailA{width:100%;margin-left:0;justify-content:space-between}.tailA .mini{flex-direction:row}.tailA .mini .pill small{display:none}
   .go{padding:8px 26px;font-size:20px}
   .cx-pop{left:16px;bottom:calc(120px + env(safe-area-inset-bottom,0px))}
   .help .cols{grid-template-columns:minmax(0,1fr)}
@@ -451,16 +486,22 @@ kbd{font-family:var(--f-mono);font-size:11.5px;border:1px solid var(--line);bord
       </div>
     </div>
     <div class="cx-bar">
-      <div class="pillset">
-        <button class="pill" data-pop="popMap"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.5l6-2.5 6 2.5 6-2.5v13.5l-6 2.5-6-2.5-6 2.5z"/><path d="M9 4v13.5M15 6.5V20"/><circle cx="18.2" cy="9" r="1.6" class="f"/></svg><small>맵</small><span id="pMap">격전지</span></button>
-        <button class="pill" data-pop="popMatch"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4l9.5 9.5M4 4v3.5M4 4h3.5"/><path d="M20 4l-9.5 9.5M20 4v3.5M20 4h-3.5"/><path d="M11 16l-3 3M13 16l3 3M6.5 14.5l3 3M17.5 14.5l-3 3"/></svg><small>대전</small><span id="pMatch">1 : 1</span></button>
-        <button class="pill" data-pop="popDiff"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 17a8 8 0 1 1 15 0"/><path d="M12 17l4-6"/><circle cx="12" cy="17" r="1.6" class="f"/><path d="M7 13.2l-1.2-.7M12 9V7.6M17 13.2l1.2-.7"/></svg><small>난이도</small><span id="pDiff">보통</span></button>
+      <div class="cardsA">
+        <button class="cardA" data-pop="popMap"><span class="vis"><canvas id="cMapCv" class="mp" aria-hidden="true"></canvas></span>
+          <span class="k"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.5l6-2.5 6 2.5 6-2.5v13.5l-6 2.5-6-2.5-6 2.5z"/><path d="M9 4v13.5M15 6.5V20"/></svg>작전 지역<span class="chg">바꾸기 ▸</span></span><span class="v" id="pMap">격전지</span><span class="s" id="pMapS"></span></button>
+        <button class="cardA" data-pop="popMatch"><span class="vis"><span class="bigvs" id="pMatchBig">1 : 1</span></span>
+          <span class="k"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4l9.5 9.5M4 4v3.5M4 4h3.5"/><path d="M20 4l-9.5 9.5M20 4v3.5M20 4h-3.5"/><path d="M11 16l-3 3M13 16l3 3"/></svg>대전<span class="chg">바꾸기 ▸</span></span><span class="v" id="pMatch">일대일</span><span class="s" id="pMatchS"></span></button>
+        <button class="cardA" data-pop="popDiff"><span class="vis" id="pDial"></span>
+          <span class="k"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 17a8 8 0 1 1 15 0"/><path d="M12 17l4-6"/></svg>난이도<span class="chg">바꾸기 ▸</span></span><span class="v" id="pDiff">보통</span><span class="s" id="pDiffS"></span></button>
+      </div>
+      <div class="tailA">
+        <div class="mini">
         <button class="pill tog on" id="pSound" role="switch" aria-checked="true" aria-label="소리"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13L7.5 14.5H4z" class="f2"/><path class="wv" d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/><path class="mute" d="M15.5 9.5l5 5M20.5 9.5l-5 5"/></svg><small>소리</small><span class="sw" aria-hidden="true"><i></i></span></button>
         <button class="pill anzp" id="pAnz" title="이 게임의 작동 원리 보기"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="6" rx="1.2"/><rect x="14" y="3" width="7" height="6" rx="1.2"/><rect x="8.5" y="15" width="7" height="6" rx="1.2"/><path d="M6.5 9v3h11V9M12 12v3"/></svg><small>분석</small><span>작동 원리</span></button>
         <button class="pill" data-pop="popHelp"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M9.6 9.6a2.5 2.5 0 1 1 3.4 2.3c-.7.3-1 .8-1 1.5v.6"/><circle cx="12" cy="16.9" r="1.1" class="f"/></svg><small>도움말</small><span>조작법</span></button>
+        </div>
+        <button class="go" id="startBtn">출격</button>
       </div>
-      <span class="sp"></span>
-      <button class="go" id="startBtn">출격</button>
     </div>
     <div class="cx-pop" id="popMap" hidden><h3>맵 선택</h3><div class="maps" id="maps"></div></div>
     <div class="cx-pop" id="popMatch" hidden><h3>대전 방식</h3>
@@ -730,6 +771,32 @@ const MAPS=[
    sites:()=>[
     {x:460,y:1940,n:7,amt:1000},{x:3140,y:460,n:7,amt:1000},{x:460,y:420,n:6,amt:1000},{x:3140,y:1980,n:6,amt:1000},
     {x:1800,y:1200,a:-Math.PI/2,n:6,amt:1000},{x:1800,y:300,a:-Math.PI/2,n:5,amt:1000},{x:1800,y:2100,a:Math.PI/2,n:5,amt:1000}]},
+
+  // ---- 일반 맵 추가 ----
+  {id:'canyon',name:'협곡 회랑',size:'4200 × 1800',tag:'좁고 긴',desc:'좁고 긴 전장. 가운데 자원 지대 3곳을 두고 정면으로 부딪힘.',W:4200,H:1800,starts:[0,1,2,3,4,5],
+   sites:()=>[
+    {x:360,y:1440,n:7,amt:1500},{x:3840,y:360,n:7,amt:1500},{x:360,y:360,n:6,amt:1300},{x:3840,y:1440,n:6,amt:1300},
+    {x:2100,y:260,a:-Math.PI/2,n:5,amt:1100},{x:2100,y:1540,a:Math.PI/2,n:5,amt:1100},
+    {x:1150,y:900,a:Math.PI,n:5,amt:1200},{x:3050,y:900,a:0,n:5,amt:1200},{x:2100,y:900,a:-Math.PI/2,n:6,amt:1600}]},
+  {id:'twin',name:'노다지 광장',size:'3400 × 3400',tag:'정사각형',desc:'네 모서리 기지와 한가운데 노다지(자원 2,500 × 8). 중앙을 잡는 쪽이 유리.',W:3400,H:3400,starts:[0,1,2,3,4,5],
+   sites:()=>[
+    {x:440,y:2960,n:7,amt:1500},{x:2960,y:440,n:7,amt:1500},{x:440,y:440,n:7,amt:1500},{x:2960,y:2960,n:7,amt:1500},
+    {x:300,y:1700,n:6,amt:1200},{x:3100,y:1700,n:6,amt:1200},{x:1700,y:300,a:-Math.PI/2,n:5,amt:1100},{x:1700,y:3100,a:Math.PI/2,n:5,amt:1100},
+    {x:1700,y:1700,a:-Math.PI/2,n:8,amt:2500}]},
+  {id:'ring',name:'외곽 고리',size:'4400 × 3000',tag:'고리형',desc:'자원 지대 12곳이 큰 고리를 따라 늘어서고 가운데는 텅 빔. 옆 지대를 차례로 넓혀 가는 확장전.',W:4400,H:3000,starts:[0,6,2,8,4,10],
+   sites:()=>{const o=[];for(let k=0;k<12;k++){const a=Math.PI*.75+k*Math.PI/6,st=k%2===0;o.push({x:2200+Math.cos(a)*1760,y:1500+Math.sin(a)*1140,n:st?7:5,amt:st?1500:1100});}return o;}},
+  // ---- 무한 자원 맵 추가 ----
+  {id:'infisle',name:'수정 섬',size:'2600 × 2600',tag:'무한 · 소형',inf:true,desc:'작은 섬에 기지 6곳이 육각형으로 둘러앉음. 미네랄 무한, 가까워서 초반부터 치열함.',W:2600,H:2600,starts:[0,1,2,3,4,5],
+   sites:()=>{const o=[150,330,210,30,270,90].map(d=>{const a=d*Math.PI/180;return{x:1300+Math.cos(a)*950,y:1300+Math.sin(a)*950,n:7,amt:1000};});o.push({x:1300,y:1300,a:-Math.PI/2,n:6,amt:1000});return o;}},
+  {id:'infhall',name:'끝없는 회랑',size:'5000 × 1600',tag:'무한 · 긴 맵',inf:true,desc:'아주 긴 직선 전장. 미네랄 무한이라 병력을 계속 밀어 넣는 소모전.',W:5000,H:1600,starts:[0,1,2,3,4,5],
+   sites:()=>[
+    {x:360,y:1260,n:7,amt:1000},{x:4640,y:340,n:7,amt:1000},{x:360,y:340,n:7,amt:1000},{x:4640,y:1260,n:7,amt:1000},
+    {x:2500,y:260,a:-Math.PI/2,n:6,amt:1000},{x:2500,y:1340,a:Math.PI/2,n:6,amt:1000},
+    {x:1450,y:800,a:Math.PI,n:5,amt:1000},{x:3550,y:800,a:0,n:5,amt:1000}]},
+  {id:'infland',name:'수정 대륙',size:'4800 × 3200',tag:'무한 · 대형',inf:true,desc:'넓은 대륙에 자원 지대 11곳, 미네랄 무한. 대규모 병력이 오가는 최장기전.',W:4800,H:3200,starts:[0,1,2,3,4,5],
+   sites:()=>{const f=(fx,fy,n)=>({x:fx*4800,y:fy*3200,n,amt:1000});return[
+    {x:460,y:2740,n:7,amt:1000},{x:4340,y:460,n:7,amt:1000},{x:460,y:460,n:7,amt:1000},{x:4340,y:2740,n:7,amt:1000},
+    f(.5,.1,6),f(.5,.9,6),f(.08,.5,5),f(.92,.5,5),f(.5,.5,6),f(.3,.3,5),f(.7,.7,5)];}},
 ];
 let SITES=[];
 function mapSites(M){return M.sites().map(s=>Object.assign({},s,{a:s.a!=null?s.a:Math.atan2(s.y-M.H/2,s.x-M.W/2)}));}
@@ -2263,10 +2330,24 @@ function menuTick(dt){
   if(menuS.uT>2.8){menuS.uT=0;menuS.u=(menuS.u+1)%MU.length;menuS.fade=0;menuStats();}
   menuBg(menuS.t);menuStage(menuS.t);drawLogoEmblem(menuS.t);
 }
-function closePops(){document.querySelectorAll('.cx-pop').forEach(p=>p.hidden=true);document.querySelectorAll('.pill[data-pop]').forEach(p=>p.classList.remove('on'));}
-function pillLabels(){$('#pMap').textContent=MAPS[choice.map].name;$('#pMatch').textContent=matchLabel(choice.opp,choice.opp===1?'ffa':choice.mode);
-  $('#pDiff').textContent=DIFF[choice.diff].label;const ps=$('#pSound');ps.classList.toggle('on',Snd.isOn());ps.setAttribute('aria-checked',Snd.isOn()?'true':'false');}
-document.querySelectorAll('.pill[data-pop]').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();const p=$('#'+b.dataset.pop),open=p.hidden;closePops();if(open){p.hidden=false;b.classList.add('on');}}));
+function closePops(){document.querySelectorAll('.cx-pop').forEach(p=>p.hidden=true);document.querySelectorAll('[data-pop]').forEach(p=>p.classList.remove('on'));}
+const DKEYS=['easy','normal','hard'],DCOL={easy:'#86e08f',normal:'#e8c547',hard:'#ff6b5b'};
+const fmtMin=s=>`${Math.floor(s/60)}분${s%60?` ${s%60}초`:''}`;
+function diffDial(){const i=DKEYS.indexOf(choice.diff),c=DCOL[choice.diff],a=-Math.PI+(i+.5)/3*Math.PI;
+  const arc=k=>{const a0=-Math.PI+k/3*Math.PI+.06,a1=-Math.PI+(k+1)/3*Math.PI-.06;return `<path d="M${32+Math.cos(a0)*24} ${40+Math.sin(a0)*24} A24 24 0 0 1 ${32+Math.cos(a1)*24} ${40+Math.sin(a1)*24}" stroke="${k<=i?DCOL[DKEYS[k]]:'rgba(255,255,255,.12)'}" stroke-width="6" fill="none" stroke-linecap="round"/>`;};
+  return `<svg class="dial" viewBox="0 0 64 52" aria-hidden="true">${[0,1,2].map(arc).join('')}<line x1="32" y1="40" x2="${32+Math.cos(a)*18}" y2="${40+Math.sin(a)*18}" stroke="${c}" stroke-width="2.5" stroke-linecap="round"/><circle cx="32" cy="40" r="3.5" fill="${c}"/></svg>`;}
+function slotDots(){const me=RACES[choice.race].color,n=choice.opp,vs=choice.mode==='vs'&&n>1;
+  return `<span class="slots">${[me,...Array(n).fill(0).map((_,i)=>vs?'#ff6b5b':'#ff6b5b')].map((c,i)=>`<i style="background:${c}${i===0?';box-shadow:0 0 0 2px rgba(255,255,255,.25)':''}"></i>`).join('')}${vs?'<em>연합</em>':''}</span>`;}
+function pillLabels(){
+  const M=MAPS[choice.map],n=M.sites().length,mode=choice.opp===1?'ffa':choice.mode,D=DIFF[choice.diff];
+  $('#pMap').textContent=M.name;$('#pMapS').textContent=`${M.size} · 자원 지대 ${n}곳${M.inf?' · 무한 자원':''}`;
+  const cv=$('#cMapCv');if(cv){cv.width=176;cv.height=120;drawMapPreview(cv,M);}
+  $('#pMatchBig').textContent=matchLabel(choice.opp,mode).replace(/ (연합전|개인전)$/,'').replace(/ /g,'');
+  $('#pMatch').textContent=choice.opp===1?'일대일':mode==='vs'?'1 : 다 연합전':'개인전';$('#pMatchS').innerHTML=slotDots();
+  $('#pDial').innerHTML=diffDial();$('#pDiff').textContent=D.label;$('#pDiff').style.color=DCOL[choice.diff];
+  $('#pDiffS').textContent=`첫 공격 약 ${fmtMin(D.first)} · 컴퓨터 채광 ×${D.mine.toFixed(1)}`;
+  const ps=$('#pSound');ps.classList.toggle('on',Snd.isOn());ps.setAttribute('aria-checked',Snd.isOn()?'true':'false');}
+document.querySelectorAll('.cx-bar [data-pop]').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();const p=$('#'+b.dataset.pop),open=p.hidden;closePops();if(open){p.style.bottom=(document.querySelector('.cx-bar').getBoundingClientRect().height+8)+'px';p.hidden=false;b.classList.add('on');}}));
 document.querySelectorAll('.cx-pop').forEach(p=>p.addEventListener('click',e=>e.stopPropagation()));
 $('#menu').addEventListener('click',()=>closePops());
 $('#pSound').addEventListener('click',e=>{e.stopPropagation();Snd.toggle();soundLabel();pillLabels();});
@@ -2277,8 +2358,10 @@ function buildMenu(){
   box.querySelectorAll('.rbtn').forEach((b,i)=>emblemIcon(b.querySelector('canvas'),RACES[i],38));
   pickRace(choice.race);pillLabels();
   const mb=$('#maps');
-  mb.innerHTML=MAPS.map((m,i)=>`<button class="mapc${i===choice.map?' sel':''}" data-i="${i}"><canvas width="240" height="150"></canvas><span class="mt"><b>${m.name}</b><em>${m.tag}</em></span><span class="ms">${m.size}</span><span class="md">${m.desc}</span></button>`).join('');
-  mb.querySelectorAll('.mapc').forEach((b,i)=>drawMapPreview(b.querySelector('canvas'),MAPS[i]));
+  const card=(m,i)=>`<button class="mapc${i===choice.map?' sel':''}" data-i="${i}"><canvas width="240" height="150"></canvas><span class="mt"><b>${m.name}</b><em>${m.tag}</em></span><span class="ms">${m.size}</span><span class="md">${m.desc}</span></button>`;
+  const grp=(t,f)=>`<h4 class="mgh">${t}</h4>`+MAPS.map((m,i)=>f(m)?card(m,i):'').join('');
+  mb.innerHTML=grp('일반 맵',m=>!m.inf)+grp('무한 자원 맵 · 미네랄이 줄지 않음',m=>m.inf);
+  mb.querySelectorAll('.mapc').forEach(b=>drawMapPreview(b.querySelector('canvas'),MAPS[+b.dataset.i]));
 }
 function drawMapPreview(c,M){
   const g=c.getContext('2d'),cw=c.width,ch=c.height,s=Math.min((cw-12)/M.W,(ch-12)/M.H),w=M.W*s,h=M.H*s,ox=(cw-w)/2,oy=(ch-h)/2;
@@ -2326,7 +2409,7 @@ function refreshMatch(){
   document.querySelectorAll('#modeSel button').forEach(b=>{b.classList.toggle('on',b.dataset.m===choice.mode);b.disabled=n===1;});
   $('#matchTxt').textContent=matchLabel(n,choice.mode);
   $('#matchDesc').textContent=n===1?'컴퓨터 한 명과 일대일로 싸웁니다.':ffa?`나와 컴퓨터 ${n}명이 모두 서로 적입니다. 컴퓨터끼리도 싸우니 틈을 노리세요.`:`컴퓨터 ${n}명이 한 편이 되어 나 혼자를 상대합니다. 서로 공격하지 않습니다.`;
-  document.querySelectorAll('.mapc').forEach((b,i)=>drawMapPreview(b.querySelector('canvas'),MAPS[i]));
+  document.querySelectorAll('.mapc').forEach(b=>drawMapPreview(b.querySelector('canvas'),MAPS[+b.dataset.i]));
   pillLabels();
 }
 $('#oppN').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;choice.opp=+b.dataset.n;refreshMatch();});
