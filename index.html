@@ -57,6 +57,9 @@ button:focus-visible,summary:focus-visible{outline:2px solid var(--ore);outline-
 .opp i{width:8px;height:8px;border-radius:2px}
 .opp.out{text-decoration:line-through;opacity:.4}
 .opp.lab{font-family:var(--f-mono);font-size:11px;color:var(--alert);letter-spacing:.08em}
+.opp.lab.fr{color:#7cc8ff}
+.opp.dot{padding-left:0;padding-right:0;margin-right:-2px}
+.opp.dot i{width:10px;height:10px}
 .match{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
 .seg button:disabled{opacity:.35;cursor:not-allowed}
 .matchinfo{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1 1 240px}
@@ -128,6 +131,7 @@ button:focus-visible,summary:focus-visible{outline:2px solid var(--ore);outline-
 .slots{display:flex;gap:4px;align-items:center;flex-wrap:wrap}
 .slots i{width:13px;height:13px;border-radius:3px;border:1px solid rgba(0,0,0,.4)}
 .slots em{font-style:normal;font-size:10.5px;color:var(--alert);margin-left:4px}
+.slots em.vs{color:var(--dim);margin:0 4px;font-family:var(--f-mono);font-size:10px}
 .tailA{display:flex;align-items:center;gap:12px;margin-left:auto}
 .tailA .mini{display:flex;flex-direction:column;gap:4px}
 .tailA .mini .pill{padding:4px 10px;font-size:12px;justify-content:flex-start}
@@ -378,6 +382,7 @@ kbd{font-family:var(--f-mono);font-size:11.5px;border:1px solid var(--line);bord
 .et i{width:10px;height:10px;border-radius:2px}
 .et em{font-style:normal;font-size:11px;padding:0 5px;border-radius:3px;background:var(--ink);color:var(--console);line-height:16px}
 .et em.al{background:transparent;color:var(--alert);border:1px solid var(--alert)}
+.et em.fr{background:transparent;color:#7cc8ff;border:1px solid #7cc8ff}
 .et .st{font-family:var(--f-mono);font-size:11.5px;font-variant-numeric:tabular-nums}
 .st.win{color:var(--ore)} .st.out{color:var(--alert)} .st.alive{color:var(--ok)}
 .echart{display:flex;flex-direction:column;gap:8px}
@@ -505,7 +510,7 @@ kbd{font-family:var(--f-mono);font-size:11.5px;border:1px solid var(--line);bord
         <div class="seg" id="oppN" aria-label="상대 수">
           <button data-n="1">상대 1</button><button data-n="2">2</button><button data-n="3">3</button><button data-n="4">4</button><button data-n="5">5</button>
         </div>
-        <div class="seg" id="modeSel"><button data-m="ffa">개인전</button><button data-m="vs">1 : 다 연합</button></div>
+        <div class="seg" id="modeSel"><button data-m="ffa">개인전</button><button data-m="vs">1 : 다 연합</button><button data-m="team">팀전 (컴퓨터와 한 편)</button></div>
         <div class="matchinfo"><b id="matchTxt">1 : 1</b><span id="matchDesc"></span></div>
       </div>
     </div>
@@ -880,14 +885,21 @@ function newGame(raceIdx,diff,mapIdx){
   const pool=[0,1,2,3,4,5].filter(i=>i!==raceIdx).sort(()=>Math.random()-.5).slice(0,nOpp);
   const races=[raceIdx,...pool];
   G={map:MAP,mode,t:0,ents:[],byId:new Map(),nextId:1,proj:[],fx:[],sel:[],placing:null,cmdMode:null,over:false,speed:1,paused:false,diff,
-     teams:races.map((ri,i)=>{const race=RACES[ri];return{id:i,race,S:buildStats(race),ally:i===0?0:(mode==='vs'?1:i),out:false,
-       minerals:i&&diff==='hard'?200:150,supUsed:0,supCap:0,kills:0,lost:0,mined:0,built:0,made:0,dmg:0,outAt:null,
+     teams:races.map((ri,i)=>{const race=RACES[ri];return{id:i,race,S:buildStats(race),ally:i===0?0:mode==='vs'?1:mode==='team'?(i<=teamSplit(nOpp).al?0:1):i,out:false,
+       minerals:i&&diff==='hard'&&!(mode==='team'&&i<=teamSplit(nOpp).al)?200:150,supUsed:0,supCap:0,kills:0,lost:0,mined:0,built:0,made:0,dmg:0,outAt:null,
        ai:{wave:0,size:DIFF[diff].wave,attacking:false,lastExp:0},aiT:i*.15};}),
      alertAt:-99,pings:[],endT:0};
   const rand=rng(Math.floor(Math.random()*1e9));
   makeTerrain(Math.floor(rand()*1e9));
   for(const s of SITES)addPatches(s.x,s.y,s.a,s.n,165,s.amt,rand);
-  G.teams.map((tm,i)=>[i,SITES[MAP.starts[i]]]).forEach(([tm,s])=>{
+  let starts=MAP.starts.slice();
+  if(mode==='team'){const st=MAP.starts.map(k=>SITES[k]),me=st[0],dd=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
+    let rest=MAP.starts.slice(1);const far=rest.reduce((b,k)=>dd(SITES[k],me)>dd(SITES[b],me)?k:b,rest[0]);
+    const al=teamSplit(nOpp).al,score=k=>dd(SITES[k],me)-dd(SITES[k],SITES[far]);
+    const allyS=rest.filter(k=>k!==far).sort((a,b)=>score(a)-score(b)).slice(0,al);
+    const enemyS=[far,...rest.filter(k=>k!==far&&!allyS.includes(k)).sort((a,b)=>dd(SITES[a],SITES[far])-dd(SITES[b],SITES[far]))];
+    starts=[MAP.starts[0],...allyS,...enemyS];}
+  G.teams.map((tm,i)=>[i,SITES[starts[i]]]).forEach(([tm,s])=>{
     const hq=spawnBld(tm,'hq',s.x,s.y,true);
     for(let i=0;i<5;i++){const a=s.a+Math.PI+(i-2)*.4;const u=spawnUnit(tm,'worker',s.x+Math.cos(a)*62,s.y+Math.sin(a)*62);
       const m=nearestMineral(u.x,u.y,600);if(m)startGather(u,m);}
@@ -1045,7 +1057,7 @@ function updUnit(u,dt){
       }else{
         const hq=nearestHQ(u.team,u.x,u.y);if(!hq){u.state='idle';break;}
         if(moveTo(u,hq.x,hq.y,dt,hq.r+u.r+2,hq)){
-          const gain=u.team>0?u.carry*DIFF[G.diff].mine:u.carry;
+          const gain=isFoe(u.team)?u.carry*DIFF[G.diff].mine:u.carry;
           tm.minerals+=gain;tm.mined+=u.carry;u.carry=0;u.phase='to';
           if(u.team===0)Snd.play('deposit',u.x,u.y);
           if(!m){const nm=nearestMineral(u.x,u.y,520);if(nm)u.min=nm.id;else u.state='idle';}
@@ -1203,7 +1215,7 @@ function sim(dt){
   }
   recomputeSupply();
   G.auraT=(G.auraT||0)-dt;if(G.auraT<=0){G.auraT=.25;auraTick();}
-  for(const u of G.ents){if(u.type!=='u'||u.dead)continue;const S=T(u.team).S[u.kind];if(S.income){const g=S.income*dt;T(u.team).minerals+=u.team>0?g*DIFF[G.diff].mine:g;T(u.team).mined+=g;}}
+  for(const u of G.ents){if(u.type!=='u'||u.dead)continue;const S=T(u.team).S[u.kind];if(S.income){const g=S.income*dt;T(u.team).minerals+=isFoe(u.team)?g*DIFF[G.diff].mine:g;T(u.team).mined+=g;}}
   if(!G.noAI)for(let i=1;i<G.teams.length;i++){const tm=G.teams[i];if(tm.out)continue;tm.aiT-=dt;if(tm.aiT<=0){tm.aiT=.8;aiTick(i);}}
   if(!G.noEnd){G.endT-=dt;if(G.endT<=0){G.endT=.5;checkEnd();}}
   if(!G.hist)G.hist=[];
@@ -1318,12 +1330,15 @@ function checkEnd(){
   for(let i=1;i<G.teams.length;i++){const tm=G.teams[i];
     if(!tm.out&&!has(i)){tm.out=true;tm.outAt=G.t;oppSig='';
       for(const e of G.ents)if(e.team===i&&e.type==='u'&&!e.dead){e.dead=true;boom(e);}
-      if(G.teams.some((t,j)=>j>0&&!t.out)){toast(`${tm.race.name} 탈락`);Snd.play('collapse');}}}
+      if(G.teams.some((t,j)=>isFoe(j)&&!t.out)){toast(isAlly(i)?`아군 ${tm.race.name} 탈락`:`${tm.race.name} 탈락`,isAlly(i));Snd.play('collapse');}}}
   if(!has(0)){T(0).outAt=G.t;finish(false);}
-  else if(G.teams.every((t,i)=>i===0||t.out))finish(true);
+  else if(G.teams.every((t,i)=>!isFoe(i)||t.out))finish(true);
 }
+function teamSplit(n){const a=Math.floor(n/2);return{al:a,en:n-a};}
+const isAlly=i=>i>0&&G&&G.teams[i]&&G.teams[i].ally===G.teams[0].ally;
+const isFoe=i=>i>=0&&G&&G.teams[i]&&G.teams[i].ally!==G.teams[0].ally;
 function hostile(a,b){return a!==b&&a>=0&&b>=0&&G.teams[a].ally!==G.teams[b].ally;}
-function matchLabel(n,mode){return n===1?'1 : 1':mode==='vs'?`1 : ${n} 연합전`:`${Array(n+1).fill('1').join(' : ')} 개인전`;}
+function matchLabel(n,mode){if(mode==='team'&&n>1){const t=teamSplit(n);return `${t.al+1} : ${t.en} 팀전`;}return n===1?'1 : 1':mode==='vs'?`1 : ${n} 연합전`:`${Array(n+1).fill('1').join(' : ')} 개인전`;}
 function sampleHist(){
   const army=G.teams.map(()=>0);
   for(const e of G.ents)if(e.type==='u'&&!e.dead&&e.kind!=='worker')army[e.team]+=T(e.team).S[e.kind].sup;
@@ -1347,10 +1362,11 @@ function finish(win){
   const status=(t,i)=>{
     if(i===0)return win?['승리','win']:[`패배 ${clock(t.outAt??G.t)}`,'out'];
     if(t.out)return[`탈락 ${clock(t.outAt)}`,'out'];
+    if(isAlly(i))return win?['승리','win']:['생존','alive'];
     return win?['패배','out']:['생존','alive'];
   };
   $('#endTeams').innerHTML=G.teams.map((t,i)=>{const [s,c]=status(t,i);
-    return `<div class="et${i===0?' me':''}"><i style="background:${t.race.color}"></i><b>${t.race.name}</b>${i===0?'<em>나</em>':G.mode==='vs'&&G.teams.length>2?'<em class="al">연합</em>':''}<span class="st ${c}">${s}</span></div>`;}).join('');
+    return `<div class="et${i===0?' me':''}"><i style="background:${t.race.color}"></i><b>${t.race.name}</b>${i===0?'<em>나</em>':G.mode==='team'?(isAlly(i)?'<em class="fr">아군</em>':'<em class="al">적팀</em>'):G.mode==='vs'&&G.teams.length>2?'<em class="al">연합</em>':''}<span class="st ${c}">${s}</span></div>`;}).join('');
   $('#endStats').innerHTML=CATS.map(c=>{
     const vals=G.teams.map(t=>Math.round(t[c.k]));const mx=Math.max(1,...vals);
     const best=c.low?Math.min(...vals):Math.max(...vals);
@@ -1385,7 +1401,7 @@ function issue(wx,wy,mode){
     for(const u of units){if(u.kind==='worker')startGather(u,t);else{u.state='move';u.tx=t.x;u.ty=t.y;}}
     mark(t.x,t.y,'#5fe3d0');Snd.play('gather');return;
   }
-  if(t&&t.team>0){for(const u of units){u.state='attack';u.tgt=t.id;u.resume=null;}mark(t.x,t.y,'#ff6b5b');Snd.play('attackCmd');return;}
+  if(t&&isFoe(t.team)){for(const u of units){u.state='attack';u.tgt=t.id;u.resume=null;}mark(t.x,t.y,'#ff6b5b');Snd.play('attackCmd');return;}
   if(t&&t.team===0&&t.type==='b'&&t.kind==='hq'){for(const u of units){if(u.kind==='worker'&&u.carry>0){u.state='gather';u.phase='back';u.min=u.min||null;}else{u.state='move';u.tx=wx;u.ty=wy;}}mark(wx,wy,'#86e08f');Snd.play('move');return;}
   Snd.play(mode==='amove'?'attackCmd':'move');
   const n=units.length,cols=Math.ceil(Math.sqrt(n)),rows=Math.ceil(n/cols),sp=22;
@@ -2572,8 +2588,8 @@ function drawEmotes(){
 function drawUnit(u,sel){
   const race=R(u.team);
   ctx.save();ctx.translate(u.x,u.y);
-  if(u.team>0){ctx.fillStyle='rgba(255,70,55,.3)';ctx.beginPath();ctx.ellipse(0,u.r*.55,u.r*1.15,u.r*.5,0,0,7);ctx.fill();}
-  if(sel){ctx.strokeStyle=u.team===0?'#86e08f':'#ff6b5b';ctx.lineWidth=1.6;ctx.beginPath();ctx.ellipse(0,u.r*.35,u.r+6,(u.r+6)*.55,0,0,7);ctx.stroke();}
+  if(u.team>0){ctx.fillStyle=isAlly(u.team)?'rgba(95,200,255,.28)':'rgba(255,70,55,.3)';ctx.beginPath();ctx.ellipse(0,u.r*.55,u.r*1.15,u.r*.5,0,0,7);ctx.fill();}
+  if(sel){ctx.strokeStyle=u.team===0?'#86e08f':isAlly(u.team)?'#7cc8ff':'#ff6b5b';ctx.lineWidth=1.6;ctx.beginPath();ctx.ellipse(0,u.r*.35,u.r+6,(u.r+6)*.55,0,0,7);ctx.stroke();}
   {const S0=T(u.team).S[u.kind],au=S0.auraArmor||S0.auraHaste||S0.auraShield||S0.auraSlow;
     if(au){ctx.save();ctx.globalAlpha=sel?.4:.16;ctx.strokeStyle=S0.auraSlow?'#ff6b5b':race.color;ctx.lineWidth=1.5;ctx.setLineDash([6,6]);ctx.lineDashOffset=-G.t*12;ctx.beginPath();ctx.arc(0,0,au.r,0,7);ctx.stroke();ctx.restore();}
     if(u.rooted){ctx.save();ctx.strokeStyle='#8a6a44';ctx.lineWidth=2;for(let i=0;i<5;i++){const a=i*1.256;ctx.beginPath();ctx.moveTo(Math.cos(a)*u.r*.8,Math.sin(a)*u.r*.8);ctx.lineTo(Math.cos(a+.3)*u.r*1.6,Math.sin(a+.3)*u.r*1.6);ctx.stroke();}ctx.restore();}
@@ -2601,8 +2617,8 @@ function drawBld(b,sel){
   const race=R(b.team),r=b.r;
   ctx.save();ctx.translate(b.x,b.y);
   ctx.fillStyle='rgba(0,0,0,.28)';ctx.beginPath();ctx.ellipse(r*.08,r*.18,r*1.08,r*.9,0,0,7);ctx.fill();
-  if(sel){ctx.strokeStyle=b.team===0?'#86e08f':'#ff6b5b';ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(0,r*.25,r+8,(r+8)*.6,0,0,7);ctx.stroke();}
-  if(b.team>0){ctx.strokeStyle='rgba(255,107,91,.55)';ctx.lineWidth=1.5;ctx.setLineDash([10,7]);ctx.beginPath();ctx.arc(0,0,r+6,0,7);ctx.stroke();ctx.setLineDash([]);}
+  if(sel){ctx.strokeStyle=b.team===0?'#86e08f':isAlly(b.team)?'#7cc8ff':'#ff6b5b';ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(0,r*.25,r+8,(r+8)*.6,0,0,7);ctx.stroke();}
+  if(b.team>0){ctx.strokeStyle=isAlly(b.team)?'rgba(124,200,255,.5)':'rgba(255,107,91,.55)';ctx.lineWidth=1.5;ctx.setLineDash([10,7]);ctx.beginPath();ctx.arc(0,0,r+6,0,7);ctx.stroke();ctx.setLineDash([]);}
   if(!b.built)ctx.globalAlpha=.4+.5*b.prog;
   const [bd,bl]=BLD_H[b.kind],grow_=b.built?1:.25+.75*b.prog;
   const still=BLD_STILL.has(race.style+'|'+b.kind)||!b.built;
@@ -2628,7 +2644,7 @@ function drawMini(){
   mctx.drawImage(miniBg,0,0);
   for(const e of G.ents){
     if(e.type==='m'){mctx.fillStyle='#5fe3d0';mctx.fillRect(e.x*sx-2,e.y*sy-2,4,4);continue;}
-    const c=e.team===0?'#86e08f':e.type==='b'?'#ff6b5b':R(e.team).color;mctx.fillStyle=c;
+    const c=e.team===0?'#86e08f':isAlly(e.team)?(e.type==='b'?'#7cc8ff':'#bfe6ff'):e.type==='b'?'#ff6b5b':R(e.team).color;mctx.fillStyle=c;
     const s=e.type==='b'?Math.max(6,e.r*sx*2):4;mctx.fillRect(e.x*sx-s/2,e.y*sy-s/2,s,s);
     if(e.type==='b'){mctx.fillStyle=R(e.team).color;mctx.fillRect(e.x*sx-s/4,e.y*sy-s/4,s/2,s/2);}
   }
@@ -2677,7 +2693,7 @@ function renderInfo(){
   const e=es[0];
   if(e.type==='m'){el.innerHTML=`<div class="iname"><i class="sw" style="background:#5fe3d0"></i>미네랄<small>자원</small></div><div class="bar"><i style="width:${e.amount/e.max*100}%;background:#5fe3d0"></i></div><div class="num">${G.map.inf?'무한 매장 · 줄어들지 않음':`${fmt(e.amount)} / ${fmt(e.max)} 남음`}</div><div class="hint">일꾼을 선택한 뒤 이곳을 우클릭(모바일은 탭)하면 채광합니다.</div>`;return;}
   const race=R(e.team),S=T(e.team).S[e.kind];
-  let h=`<div class="iname"><i class="sw" style="background:${race.color}"></i>${race.names[e.kind]}<small>${KIND[e.kind]} · ${race.name}${e.team>0?' · 적':''}</small></div>`;
+  let h=`<div class="iname"><i class="sw" style="background:${race.color}"></i>${race.names[e.kind]}<small>${KIND[e.kind]} · ${race.name}${e.team>0?(isAlly(e.team)?' · 아군':' · 적'):''}</small></div>`;
   h+=`<div class="bar"><i style="width:${Math.max(0,e.hp/e.maxhp*100)}%"></i></div><div class="num">체력 ${fmt(Math.max(0,e.hp))} / ${fmt(e.maxhp)}${e.maxsh?` · 보호막 ${fmt(e.shield)} / ${fmt(e.maxsh)}`:''}</div>`;
   if(e.type==='u'){
     const st=e.state==='gather'?GPH[e.phase]:STATE[e.state];
@@ -2810,13 +2826,14 @@ function diffDial(){const i=DKEYS.indexOf(choice.diff),c=DCOL[choice.diff],a=-Ma
   const arc=k=>{const a0=-Math.PI+k/3*Math.PI+.06,a1=-Math.PI+(k+1)/3*Math.PI-.06;return `<path d="M${32+Math.cos(a0)*24} ${40+Math.sin(a0)*24} A24 24 0 0 1 ${32+Math.cos(a1)*24} ${40+Math.sin(a1)*24}" stroke="${k<=i?DCOL[DKEYS[k]]:'rgba(255,255,255,.12)'}" stroke-width="6" fill="none" stroke-linecap="round"/>`;};
   return `<svg class="dial" viewBox="0 0 64 52" aria-hidden="true">${[0,1,2].map(arc).join('')}<line x1="32" y1="40" x2="${32+Math.cos(a)*18}" y2="${40+Math.sin(a)*18}" stroke="${c}" stroke-width="2.5" stroke-linecap="round"/><circle cx="32" cy="40" r="3.5" fill="${c}"/></svg>`;}
 function slotDots(){const me=RACES[choice.race].color,n=choice.opp,vs=choice.mode==='vs'&&n>1;
+  if(choice.mode==='team'&&n>1){const t=teamSplit(n);return `<span class="slots"><i style="background:${me};box-shadow:0 0 0 2px rgba(255,255,255,.25)"></i>${'<i style="background:#7cc8ff"></i>'.repeat(t.al)}<em class="vs">VS</em>${'<i style="background:#ff6b5b"></i>'.repeat(t.en)}</span>`;}
   return `<span class="slots">${[me,...Array(n).fill(0).map((_,i)=>vs?'#ff6b5b':'#ff6b5b')].map((c,i)=>`<i style="background:${c}${i===0?';box-shadow:0 0 0 2px rgba(255,255,255,.25)':''}"></i>`).join('')}${vs?'<em>연합</em>':''}</span>`;}
 function pillLabels(){
   const M=MAPS[choice.map],n=M.sites().length,mode=choice.opp===1?'ffa':choice.mode,D=DIFF[choice.diff];
   $('#pMap').textContent=M.name;$('#pMapS').textContent=`${M.size} · 자원 지대 ${n}곳${M.inf?' · 무한 자원':''}`;
   const cv=$('#cMapCv');if(cv){cv.width=176;cv.height=120;drawMapPreview(cv,M);}
-  $('#pMatchBig').textContent=matchLabel(choice.opp,mode).replace(/ (연합전|개인전)$/,'').replace(/ /g,'');
-  $('#pMatch').textContent=choice.opp===1?'일대일':mode==='vs'?'1 : 다 연합전':'개인전';$('#pMatchS').innerHTML=slotDots();
+  $('#pMatchBig').textContent=matchLabel(choice.opp,mode).replace(/ (연합전|개인전|팀전)$/,'').replace(/ /g,'');
+  $('#pMatch').textContent=choice.opp===1?'일대일':mode==='vs'?'1 : 다 연합전':mode==='team'?'팀전 · 컴퓨터와 한 편':'개인전';$('#pMatchS').innerHTML=slotDots();
   $('#pDial').innerHTML=diffDial();$('#pDiff').textContent=D.label;$('#pDiff').style.color=DCOL[choice.diff];
   $('#pDiffS').textContent=`첫 공격 약 ${fmtMin(D.first)} · 컴퓨터 채광 ×${D.mine.toFixed(1)}`;
   const ps=$('#pSound');ps.classList.toggle('on',Snd.isOn());ps.setAttribute('aria-checked',Snd.isOn()?'true':'false');}
@@ -2881,7 +2898,7 @@ function refreshMatch(){
   document.querySelectorAll('#oppN button').forEach(b=>b.classList.toggle('on',+b.dataset.n===n));
   document.querySelectorAll('#modeSel button').forEach(b=>{b.classList.toggle('on',b.dataset.m===choice.mode);b.disabled=n===1;});
   $('#matchTxt').textContent=matchLabel(n,choice.mode);
-  $('#matchDesc').textContent=n===1?'컴퓨터 한 명과 일대일로 싸웁니다.':ffa?`나와 컴퓨터 ${n}명이 모두 서로 적입니다. 컴퓨터끼리도 싸우니 틈을 노리세요.`:`컴퓨터 ${n}명이 한 편이 되어 나 혼자를 상대합니다. 서로 공격하지 않습니다.`;
+  $('#matchDesc').textContent=n===1?'컴퓨터 한 명과 일대일로 싸웁니다.':ffa?`나와 컴퓨터 ${n}명이 모두 서로 적입니다. 컴퓨터끼리도 싸우니 틈을 노리세요.`:choice.mode==='team'?(()=>{const t=teamSplit(n);return `나와 컴퓨터 ${t.al}명이 한 팀, 컴퓨터 ${t.en}명이 상대 팀입니다. 아군 기지는 가까이 붙어서 시작합니다.${n%2?'':' (상대 수를 홀수로 고르면 인원이 똑같아집니다)'}`;})():`컴퓨터 ${n}명이 한 편이 되어 나 혼자를 상대합니다. 서로 공격하지 않습니다.`;
   document.querySelectorAll('.mapc').forEach(b=>drawMapPreview(b.querySelector('canvas'),MAPS[+b.dataset.i]));
   pillLabels();
 }
@@ -2890,7 +2907,10 @@ $('#modeSel').addEventListener('click',e=>{const b=e.target.closest('button');if
 refreshMatch();
 function renderOpps(){
   const sig=G.teams.map(t=>t.out?1:0).join('');if(sig===oppSig)return;oppSig=sig;
-  $('#opps').innerHTML=(G.mode==='vs'&&G.teams.length>2?'<span class="opp lab">연합</span>':'')+G.teams.slice(1).map(t=>`<span class="opp${t.out?' out':''}"><i style="background:${t.race.color}"></i>${t.race.name}</span>`).join('');
+  const chip=t=>`<span class="opp${t.out?' out':''}"><i style="background:${t.race.color}"></i>${t.race.name}</span>`;
+  const dot=t=>`<span class="opp dot${t.out?' out':''}" title="${t.race.name}"><i style="background:${t.race.color}"></i></span>`;
+  $('#opps').innerHTML=G.mode==='team'?'<span class="opp lab fr">아군</span>'+G.teams.filter((t,i)=>isAlly(i)).map(dot).join('')+'<span class="opp lab">적팀</span>'+G.teams.filter((t,i)=>isFoe(i)).map(dot).join('')
+    :(G.mode==='vs'&&G.teams.length>2?'<span class="opp lab">연합</span>':'')+G.teams.slice(1).map(chip).join('');
 }
 function soundLabel(){$('#bSound').textContent=Snd.isOn()?'소리 켬':'소리 끔';$('#bSound').classList.toggle('off',!Snd.isOn());pillLabels();}
 $('#bSound').addEventListener('click',()=>{Snd.toggle();soundLabel();});
