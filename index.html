@@ -1384,7 +1384,7 @@ const ownSel=()=>selEnts().filter(e=>e.team===0);
 function setSel(list){G.sel=list.map(e=>e.id);G.placing=null;G.cmdMode=null;lastSig='';if(list.length&&list[0].team===0)Snd.play('select');}
 function pick(wx,wy){
   let best=null,bd=1e9;
-  for(const e of G.ents){if(e.dead)continue;const d=Math.hypot(e.x-wx,e.y-wy);const lim=e.r+(e.type==='u'?6:2);
+  for(const e of G.ents){if(e.dead)continue;let d=Math.hypot(e.x-wx,e.y-wy);if(e.type==='u'){const lf=unitHeight(R(e.team),e.kind)[1];d=Math.min(d,Math.hypot(e.x-wx,e.y-lf-wy));}const lim=e.r+(e.type==='u'?6:2);
     if(d<=lim){const sc=d-(e.type==='u'?20:0);if(sc<bd){bd=sc;best=e;}}}
   return best;
 }
@@ -1492,6 +1492,7 @@ function resize(){
   if(G)clampCam();
 }
 window.addEventListener('resize',()=>{resize();if(G&&G.over&&!$('#end').hidden)drawHist();});
+if(window.ResizeObserver)new ResizeObserver(()=>{const r=$('#view').getBoundingClientRect();if(Math.abs(r.width-view.w)>.5||Math.abs(r.height-view.h)>.5)resize();}).observe($('#view'));
 const toWorld=(sx,sy)=>({x:cam.x+sx/view.zoom,y:cam.y+sy/view.zoom});
 const keys=new Set();let shiftDown=false;
 const mouse={x:0,y:0,in:false,wx:0,wy:0};
